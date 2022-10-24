@@ -49,8 +49,6 @@ pip install Operetta_tool
 
 #### 2. Conduct z-projection of the *.tiff format image via Z-PROJECTION in ImageJ
 
-* BIOP [https://github.com/BIOP/ijp-operetta-importer?fbclid=IwAR1L6uXqVh9crz1jJ7gdqxPd4o2jfQ3VkLVzk9uokuSlSo1MKqdVPudHyK4]
-
 
 <p align="center">
 <img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/projection.bmp" alt="drawing" width="600" />
@@ -69,24 +67,6 @@ pip install Operetta_tool
 ```
 import Operetta_tool
 ```
-
-
-
-image_dictinary, img_length, img_width = image_sequences(df)
-
-
-path_to_opera_projection = 'MAX_WT 15M 4754 S1 63x - R01-C01.png'
-
-
-image_grid(path_to_opera_projection, img_length, img_width, 50)
-
-
-numbers_of_pictures=[20,27,34]
-path_to_save = os.path.join('selected','sdd')
-path_to_images ='Images'
-
-select_pictures(image_dictinary, path_to_images, path_to_save, numbers_of_pictures)
-    
     
     
 
@@ -100,7 +80,7 @@ operetta.operetta_annotation.split_chanels(path_to_images, path_to_save)
 * path_to_save - path to directory for splited channels save
 
 <p align="center">
-<img  src="https://github.com/jkubis96/GEDSpy/blob/main/fig/pathways_pathway.png?raw=true" alt="drawing" width="600" />
+<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/ff.bmp" alt="drawing" width="600" />
 </p>
 
 ###### Figure 1 Directories with images from different channels
