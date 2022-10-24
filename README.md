@@ -28,7 +28,7 @@
 #### In command line write:
 
 ```
-pip install Operetta_tool
+pip install operetta_tool
 ```
 
 ## Opera data prepare as input for the operetta_tool
@@ -83,7 +83,7 @@ operetta.operetta_annotation.split_chanels(path_to_images, path_to_save)
 <img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/ff.bmp" alt="drawing" width="600" />
 </p>
 
-###### Figure 1 Directories with images from different channels
+###### Figure 3 Directories with images from different channels
 
 
 #### 3. Obtaining images coordinates
@@ -127,7 +127,7 @@ operetta.operetta_annotation.image_grid(path_to_opera_projection, img_length, im
 <img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/select1.bmp" alt="drawing" width="600" />
 </p>
 
-##### Figures 2 & 3 Images composition from Opera (z-projection) with grid and indexes 
+##### Figures 4 & 5 Images composition from Opera (z-projection) with grid and indexes 
 
 
 #### 7. Separation of selected stacks of images by indexes into separate directories
@@ -147,4 +147,4 @@ operetta.operetta_annotation.select_pictures(image_dictinary, path_to_images, pa
 <img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/se.bmp" alt="drawing" width="600" />
 </p>
 
-##### Figure 4 Directories with separated chosen stacks of raw Opera images
+##### Figure 6 Directories with separated chosen stacks of raw Opera images
