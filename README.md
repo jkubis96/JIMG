@@ -65,7 +65,7 @@ pip install operetta_tool
 #### 1. Import library
 
 ```
-import Operetta_tool
+import operetta_annotation
 ```
     
     
@@ -73,7 +73,7 @@ import Operetta_tool
 #### 2. Split images from different chanels
 
 ```
-operetta.operetta_annotation.split_chanels(path_to_images, path_to_save)
+operetta_annotation.split_chanels(path_to_images, path_to_save)
 ```
 
 * path_to_images - path to directory including raw Opera images ['Images' directory]
@@ -89,7 +89,7 @@ operetta.operetta_annotation.split_chanels(path_to_images, path_to_save)
 #### 3. Obtaining images coordinates
 
 ```
-opera_coordinates = operetta.operetta_annotation.xml_load(path_to_opera_xml)
+opera_coordinates = operetta_annotation.xml_load(path_to_opera_xml)
 ```
 * path_to_opera_xml - path to Index data of Opera in xml format
 
@@ -98,7 +98,7 @@ opera_coordinates = operetta.operetta_annotation.xml_load(path_to_opera_xml)
 #### 4. Adaptation of the Opera images coordinates to the coordinates in the overview image
 
 ```
-image_dictinary, img_length, img_width = operetta.operetta_annotation.image_sequences(opera_coordinates)
+image_dictinary, img_length, img_width = operetta_annotation.image_sequences(opera_coordinates)
 ```
 * opera coordinates - data frame of indexes from Opera XML log
 
@@ -107,7 +107,7 @@ image_dictinary, img_length, img_width = operetta.operetta_annotation.image_sequ
 #### 5. Display of composite photo from Opera (z-projection) with grid in places of single photos and indexes
 
 ```
-operetta.operetta_annotation.image_grid(path_to_opera_projection, img_length, img_width, resize_factor)
+operetta_annotation.image_grid(path_to_opera_projection, img_length, img_width, resize_factor)
 ```
 
 * path_to_opera_projection - path to image (z-projection) 
@@ -133,7 +133,7 @@ operetta.operetta_annotation.image_grid(path_to_opera_projection, img_length, im
 #### 7. Separation of selected stacks of images by indexes into separate directories
 
 ```
-operetta.operetta_annotation.select_pictures(image_dictinary, path_to_images, path_to_save, numbers_of_pictures)
+operetta_annotation.select_pictures(image_dictinary, path_to_images, path_to_save, numbers_of_pictures)
 ```
 
 
