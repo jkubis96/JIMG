@@ -1,9 +1,9 @@
-# GEDSpy - python library
+# operetta_tool - python library
 
-#### GEDSpy is the python library for gene list enrichment with genes ontology, pathways and potential drugs
+#### The operetta_tool is a python library created for handling and annotation raw images from the Opera Phenix platform used for ML / AI applications
 
 <p align="right">
-<img  src="https://github.com/jkubis96/GEDSpy/blob/main/fig/logo_jbs.PNG?raw=true" alt="drawing" width="250" />
+<img  src="https://github.com/jkubis96/Operetta_tool/blob/main/fig/logo_jbs.PNG?raw=true" alt="drawing" width="250" />
 </p>
 
 
@@ -19,157 +19,152 @@
 ## Description
 
 
-<div align="justify"> GEDSpy is the python library for biological data analysis uses. It is helpful for RNAseq, single-cell RNAseq, proteomics, and other OMIC high-throughput biological analysis where are obtained lots of differentials expressed genes or proteins. GEDSpy is based on Gene Ontology [GO], PANTHER, KEGG and Reactome information. For potential drugs searching was used ZINC platform. </div>
+<div align="justify"> The Operetta_tool is a python library created for handling and annotation images from the Opera Phenix platform used for ML / AI applications. </div>
 
 </br>
-
-Used data bases:
-* Gene Ontology [http://geneontology.org/]
-* PANTHER [http://www.pantherdb.org/]
-* KEGG [https://www.genome.jp/kegg/]
-* Reactome [https://reactome.org/]
-* ZINC [https://zinc.docking.org/]
 
 ## Installation
 
 #### In command line write:
 
 ```
-pip install GEDSpy
+pip install Operetta_tool
 ```
+
+## Opera data prepare as input for the operetta_tool
+
+
+
+#### 1. Conduct raw Opera images composition into *.tiff format via BIOP plugin for Opera in ImageJ
+
+* BIOP [https://github.com/BIOP/ijp-operetta-importer?fbclid=IwAR1L6uXqVh9crz1jJ7gdqxPd4o2jfQ3VkLVzk9uokuSlSo1MKqdVPudHyK4]
+
+
+<p align="center">
+<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/biop.bmp" alt="drawing" width="600" />
+</p>
+
+###### Figure 1 Image compositing using the BIOP plugin in ImageJ
+
+
+#### 2. Conduct z-projection of the *.tiff format image via Z-PROJECTION in ImageJ
+
+* BIOP [https://github.com/BIOP/ijp-operetta-importer?fbclid=IwAR1L6uXqVh9crz1jJ7gdqxPd4o2jfQ3VkLVzk9uokuSlSo1MKqdVPudHyK4]
+
+
+<p align="center">
+<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/projection.bmp" alt="drawing" width="600" />
+</p>
+
+###### Figure 2 Image z-projection using the Z-PROJECTION in ImageJ
+
+
 
 ## Usage
 
-#### Example list of genes:
-
-```
-gene_list = ['CACNA1I','CALD1','CAMK1G','CAMK2N1','CAMSAP1','CCL15','CCL16','CCNL2','CCT8P1','CD46','CDC14A','CDK18','CDK19','CES3','CHEK2',
-			 'CHID1','COL6A3','CPVL','CYP3A43','CYP3A5','DBNL','DUSP10','DUSP9','ECHS1','EGFR','EGR2','ELL2','ERMP1','ESR1','F7','FAM171A1',
-			 'FAM20C','FGFR2','FH','FLAD1','FUT3','GAA','GBA2','GGCX','GJB1','GLRX5','GNAI2','GNB2','GNB3','GPNMB','GRB10','GRHPR','HMGCS2',
-			 'HSD17B4','HSP90AB1','IER3IP1','IGF2R','IL1R1','INF2','IRAK1','ITGA1','ITGA7','ITIH1','ITIH3','ITIH4','ITPR1','ITSN1','JAK1',
-			 'KALRN','KCNQ2','KCNQ4','KDM3A','KIAA0090','KIAA1161','KMO','KRAS','KSR1','LAMA5','LAMB2','LCN2','MAP2K7','MAP4K2','MAP4K3',
-			 'MAPK13','MARCO','MAST2','MAT1A','MATR3','MCM8','MFSD10','MGAT5','MTMR10','MUSK','MYO9B','NBAS','NCOA6','NCSTN','NDUFA4','NEK4',
-			 'NPR2','NUDT2','NUP210','ORC3L','PAOX','PEMT','PEX14','PFKL','PHKA2','PIM1','PLXND1','PMM1','PON3','POR','PPARG','PPARGC1B',
-			 'PPP2R1A','PRKCE','PTK2B','PTP4A1','PTPN23','PTPRF','PTPRK','RARA','RNF10','RNF14','RNF165','ROCK2','RRBP1','RREB1','SCN1A','SDC1',
-			 'SEPHS1','SERPINA1','SERPINA10','SFXN5','SHROOM1','SIL1','SIRPA','SLC12A7','SLC13A3','SLC16A2','SLC17A7','SLC22A23','SLC22A9',
-			 'SLC23A2','SLC25A11','SLC25A25','SLC38A3','SLC45A3','SLC4A5','SLC5A1','SLC7A2','SLC8A3','SLC9A6','SLCO1A2','SLCO1B3','SMARCA2',
-			 'SNRK','SNX4','SORBS1','SPEN','SPR','SRF','STAB1','STAT1','SUCLG2','SULT1B1','SULT1E1','TBC1D2B','TCHP','TGFBI','TGOLN2','THPO',
-			 'TIE1','TIMM13','TLK2','TMEM62','TNFSF14','TNK2','TNS1','TPI1','TRIB3','TRMT11','TTYH3']
-```
 
 
 #### 1. Import library
 
 ```
-import GEDSpy
+import Operetta_tool
 ```
 
-#### 2. Download gene ontology and pathways information
+
+
+image_dictinary, img_length, img_width = image_sequences(df)
+
+
+path_to_opera_projection = 'MAX_WT 15M 4754 S1 63x - R01-C01.png'
+
+
+image_grid(path_to_opera_projection, img_length, img_width, 50)
+
+
+numbers_of_pictures=[20,27,34]
+path_to_save = os.path.join('selected','sdd')
+path_to_images ='Images'
+
+select_pictures(image_dictinary, path_to_images, path_to_save, numbers_of_pictures)
+    
+    
+    
+
+#### 2. Split images from different chanels
 
 ```
-res1 = GEDSpy.GOPa.gopa_enrichment(gene_list, species = 'hs')
+operetta.operetta_annotation.split_chanels(path_to_images, path_to_save)
 ```
 
-* gene_list - list of analyzed genes
-* species - ['ms'] mouse | ['hs'] homo sapiens. Default: 'hs'
-
-##### Out: Data frame with gene ontology and pathways information
-
-#### 3. Statistic for gene infomration
-
-```
-res2 = GEDSpy.GOPa.gopa_stat(res1, p_val = 0.05, adj = 'BF', dir = 'results', name = 'GOPa')
-```
-* p_val - lower threshold for significant p-value. Default: 0.05 
-* adj - ['BF'] Bonferroni adjusted of p-value or ['None'] lack of adjusting. Default: 'None'
-* dir - graph saveing place. Default: `CWD/results`
-* name - graph name prefix. Default: 'GOPa'
-
-##### Out: Data frame with dtatistic for gene ontology and pathways information
+* path_to_images - path to directory including raw Opera images ['Images' directory]
+* path_to_save - path to directory for splited channels save
 
 <p align="center">
 <img  src="https://github.com/jkubis96/GEDSpy/blob/main/fig/pathways_pathway.png?raw=true" alt="drawing" width="600" />
 </p>
 
-###### Figure 1 Significant pathways graph based on input gene list
+###### Figure 1 Directories with images from different channels
 
-#### 4. Searcheing interactions among genes based on mutual pathways and ontology
+
+#### 3. Obtaining images coordinates
 
 ```
-res3 = GEDSpy.GOPa.gene_network(res2, p_val = 0.05, adj = 'BF',  dir = 'results' , name = 'gene_relation')
+opera_coordinates = operetta.operetta_annotation.xml_load(path_to_opera_xml)
+```
+* path_to_opera_xml - path to Index data of Opera in xml format
+
+
+
+#### 4. Adaptation of the Opera images coordinates to the coordinates in the overview image
+
+```
+image_dictinary, img_length, img_width = operetta.operetta_annotation.image_sequences(opera_coordinates)
+```
+* opera coordinates - data frame of indexes from Opera XML log
+
+
+
+#### 5. Display of composite photo from Opera (z-projection) with grid in places of single photos and indexes
+
+```
+operetta.operetta_annotation.image_grid(path_to_opera_projection, img_length, img_width, resize_factor)
 ```
 
-* p_val - lower threshold for significant p-value. Default: 0.05 
-* adj - ['BF'] Bonferroni adjusted of p-value or ['None'] lack of adjusting. Default: 'None'
-* dir - graph saveing place. Default: `CWD/results`
-* name - graph name. Default: 'gene_relation'
+* path_to_opera_projection - path to image (z-projection) 
+* img_length - number of pictures for images included in y-axis [from 'image_sequences' function]
+* img_width - number of pictures for images included in x-axis [from 'image_sequences' function]
+* resize_factor - factor of picture resize [modified when the pictures with default value 100 are too small or too big, depending on the magnification of the lens (x20, x40, x60, ...)]
 
-##### Out: Data frame with gene interactions
+##### Image from x20
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/GEDSpy/main/fig/gene_relation.png.bmp" alt="drawing" width="600" />
+<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/select2.bmp" alt="drawing" width="600" />
 </p>
 
-##### Figure 2 Gene relation graph
-
-#### 5. Searcheing interactions among pathways and ontology based on mutual genes
-
-```
-res4 = GEDSpy.GOPa.gopa_network(res2, p_val = 0.05, adj = 'BF', dir = 'results', name = 'GOPa_network')
-```
-
-* p_val - lower threshold for significant p-value. Default: 0.05 
-* adj - ['BF'] Bonferroni adjusted of p-value or ['None'] lack of adjusting. Default: 'None'
-* dir - graph saveing place. Default: `CWD/results`
-* name - graph name. Default: 'GOPa_network'
-
-##### Out: Data frame with gene interactions
+##### Image from x63
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/GEDSpy/main/fig/gopa_network.png.bmp" alt="drawing" width="600" />
+<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/select1.bmp" alt="drawing" width="600" />
 </p>
 
-##### Figure 3 Ontology and pathways relation graph
+##### Figures 2 & 3 Images composition from Opera (z-projection) with grid and indexes 
 
 
-#### Connecting genes list significant involved in  ontology and pathways from previous results:
-
-```
-zinc_gene_list = list(res3['Gen1']) + list(res3['Gen2'])
-```
-
-* It is example of potetntial gene list. There can be use any set of genes
-
-
-#### 6. Searcheing potential drugs
+#### 7. Separation of selected stacks of images by indexes into separate directories
 
 ```
-res5 = GEDSpy.zinc.zinc_drug(zinc_gene_list, zinc_type = 'all', species = 'all')
+operetta.operetta_annotation.select_pictures(image_dictinary, path_to_images, path_to_save, numbers_of_pictures)
 ```
 
-* zinc_gene_list - list of analyzed genes
-* zinc_type - type of substances from ZINC db: ['all'] | ['observations'] | ['substances'] | ['purchasable']. Default: 'all'
-* species - ['ms'] mouse | ['hs'] homo sapiens | ['all'] both species. Default: 'all'
 
-##### Out: Data frame with drugs information
+* path_to_images - path to directory including raw Opera images ['Images' or separate channels directory]
+* path_to_save - path to the directory for saving chosen by indexes images stacks
+* numbers_of_pictures - list of choosen pictures [1,2,3,10,11,21,...]
 
-#### 6. Statistic analysis for potential drugs
-
-```
-res6 = GEDSpy.zinc.zinc_plot(res5, p_val = 0.05, adj = 'None',  dir = 'results', name = 'drugs')
-```
-
-* p_val - lower threshold for significant p-value. Default: 0.05 
-* adj - ['BF'] Bonferroni adjusted of p-value or ['None'] lack of adjusting. Default: 'None'
-* dir - graph saveing place. Default: `CWD/results`
-* name - graph name. Default: 'drugs'
-
-##### Out: Data frame with drugs statistic
 
 
 <p align="center">
-<img  src="https://github.com/jkubis96/GEDSpy/blob/main/fig/drugs.png?raw=true" alt="drawing" width="600" />
+<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/se.bmp" alt="drawing" width="600" />
 </p>
 
-##### Figure 4 Significant drugs graph based on input gene list
-
+##### Figure 4 Directories with separated chosen stacks of raw Opera images
