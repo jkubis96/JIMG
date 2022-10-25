@@ -28,7 +28,7 @@
 #### In command line write:
 
 ```
-pip install operetta_tool
+from operetta import operetta_annotation
 ```
 
 ## Opera data prepare as input for the operetta_tool
