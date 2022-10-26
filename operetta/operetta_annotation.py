@@ -219,7 +219,7 @@ def select_pictures(image_dictinary:pd.DataFrame, path_to_images:str, path_to_sa
         
         images_list=os.listdir(path_to_images)
     
-        images_list=[x for x in images_list if re.sub('\n','', str(selected['queue'][selected['image_num'] == num][n])) in x]
+        images_list=[x for x in images_list if str(re.sub('\n','', (str(selected['queue'][selected['image_num'] == num][n]))) + 'p') in x]
         
         if not os.path.exists(os.path.join(path_to_save,'img_' + str(num))):
             os.mkdir(os.path.join(path_to_save,'img_' + str(num)))
