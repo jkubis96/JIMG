@@ -1,6 +1,6 @@
 # operetta_tool - python library
 
-##### New version 1.1.3 allow more complex processing of images as data input for AI algorithms
+##### New version 1.2.5 allow easier and more complex processing of images as data input for AI algorithms
 
 #### The operetta_tool is a python library created for handling and annotation raw images from the Opera Phenix platform used for ML / AI applications
 
@@ -89,9 +89,37 @@ xml_file, figure = operetta_annotation.detect_outlires(xml_file, list_of_out = [
 <img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/after_outlires.bmp" alt="drawing" width="600" />
 </p>
 
+#### 4. Detection of lack of images in sequence included in main image square
+
+```
+xml_file, figure_in = operetta_annotation.repair_blanks(xml_file)
+```
+
+##### This function completes missing image elements and saves their coordinates (x and y axis) to the xml metadata file. 
+##### In subsequent analysis, these points will be filled with a black square in the main photo
+
+* xml_file - input = prevoiusly loaded xml_file / output = function return xml_file supplemented with missing elements
 
 
-#### 4. Adaptation of the Opera images coordinates to the coordinates in the overview image
+##### Example:
+
+###### Before (one missing element)
+
+
+<p align="center">
+<img  src="hhttps://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/opera1.bmp" alt="drawing" width="600" />
+</p>
+
+
+###### After (repaired)
+
+
+<p align="center">
+<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/opera2.bmp" alt="drawing" width="600" />
+</p>
+
+
+#### 5. Adaptation of the Opera images coordinates to the coordinates in the overview image
 
 ```
 imgs, img_length, img_width = operetta_annotation.image_sequences(opera_coordinates)
@@ -102,14 +130,14 @@ imgs, img_length, img_width = operetta_annotation.image_sequences(opera_coordina
 * img_width - number of pictures for images included in x-axis 
 
 
-#### 5. Composition of the raw images on the x,  y, z axis into the main photo in *.tiff format including all z-stack slices
+#### 6. Composition of the raw images on the x,  y, z axis into the main photo in *.tiff format including all z-stack slices
 
 ```   
-operetta_annotation.image_concatenate(path_to_images, imgs, img_length, img_width, scale_factor, chanels, n_thread) 
+operetta_annotation.mage_concatenate(path_to_images, imgs, img_length, img_width, overlap, chanels, n_thread) 
 ```
 
 * chanels - list of channels included in composition analysis, eg.['ch2', 'ch3']
-* scale_factor - the factor for scaling pictures with different basal brightness intensities. Default 50
+* overlap - the percentage of image overlap defined earlier when taking a picture on the microscope [eg. 0.05 or 0.1 (5% or 10%)]
 * path_to_images - path to directory including raw Opera images ['Images' directory]
 * n_thread - the number of processor threads involved in the analysis adapted to the device on which the analysis will be performed. The more threads, the faster the analysis
 * imgs - a set of images in the correct order [from 'image_sequences' function]
@@ -121,48 +149,74 @@ operetta_annotation.image_concatenate(path_to_images, imgs, img_length, img_widt
 
 
 
-#### 6. Image projection in the z-axis (z-projection) of completed images stacks in *.tiff format 
+#### 7. Image projection in the z-axis (z-projection) of completed images stacks in *.tiff format 
 
 ```   
-projection = operetta_annotation.z_projection(path_to_tiff, color)
+projection = operetta_annotation.z_projection(path_to_tiff)
 ```
 
 * path_to_tiff - path to the completed image of the z-axis stack in *.tiff format
+
+###### Displayed parameters for z-projection adjustment:
+
+* size - the size of the displayed image (adjustable with the scroll of the mouse during real time)
+* gamma
+* threshold
+* brightness 
+* contrast
 * color - color scale of image projection [red, green, blue, magenta or grey]
+* method - method for the z projection [avg, max, min, std] (methods of averaging the z-stack values)
+
+###### Displayed options for z-projection adjustment:
+
+* apply - apply changes to the parameters and display a new image (excluding 'size')
+* auto - automative adjustment of and display a new image (excluding 'size' and 'color'). The color should be chosen manually and click 'Apply'
+* save - the adjusted z-projection image is saved to a variable in the python
 
 ##### Example:
 
 ###### First projection: chanel 2 - Alexa488
 ```
-projection1 = operetta_annotation.z_projection('chanel_ch2.tiff', 'green')
+projection1 = operetta_annotation.z_projection('chanel_ch2.tiff')
 cv2.imwrite('projection_chanel_ch2.png', projection1)
 ```
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/projection1.bmp" alt="drawing" width="600" />
+<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/adjust_z_stack1.bmp" alt="drawing" width="600" />
 </p>
+
+
 
 
 ###### Second projection: chanel 3 - Alexa647
 ```
-projection2 = operetta_annotation.z_projection('chanel_ch3.tiff', 'red')
+projection2 = operetta_annotation.z_projection('chanel_ch3.tiff')
 cv2.imwrite('projection_chanel_ch3.png', projection2)
 ```
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/projection2.bmp" alt="drawing" width="600" />
+<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/adjust_z_stack2.bmp" alt="drawing" width="600" />
 </p>
 
 
 
-#### 7. Merge images projections in one complex picture
+#### 8. Merge images projections in one complex picture
 
 ```   
-merged_projection = operetta_annotation.merge_images(image_list, intensity_factors)
+merged_projection = operetta_annotation.merge_images(image_list)
 ```
 
-* mage_list - list of projections to merge, eg. [projection1, projection2]
-* intensity_factors - list of important factors to each projection (which channel results should be more or less visible). Recommended is 1 to 1. The number of factors depends on the number of image projections to be merged and is set for each separately, eg. [1,1]
+* image_list - list of projections to merge, eg. [projection1, projection2]
+
+###### Displayed parameters for image merging adjustment:
+
+* size - the size of the displayed image (adjustable with the scroll of the mouse during real time)
+* Images intensity: Img_0, Img_1, ... - depending on number of input images
+
+###### Displayed options for image merging adjustment:
+
+* apply - apply changes to the parameters and display a new image (excluding 'size')
+* save - the adjusted and merged image is saved to a variable in the python
 
 ##### Example:
 
@@ -170,22 +224,21 @@ merged_projection = operetta_annotation.merge_images(image_list, intensity_facto
 
 ```
 image_list = [projection2, projection1]
-intensity_factors = [1,1]
 
-merged_projection = operetta_annotation.merge_images(image_list, intensity_factors)
+merged_projection = operetta_annotation.merge_images(image_list)
 cv2.imwrite('merged_projection.png', merged_projection)
 ```
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/merged.bmp" alt="drawing" width="600" />
+<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/merged_new.bmp" alt="drawing" width="600" />
 </p>
 
 
 
-#### 8. Display of composite photo from Opera (z-projection) with grid in places of single photos and indexes
+#### 9. Display of composite photo from Opera (z-projection) with grid in places of single photos and their indexes
 
 ```
-operetta_annotation.image_grid(path_to_opera_projection, img_length, img_width)
+numbers_of_pictures = operetta_annotation.image_grid(path_to_opera_projection, img_length, img_width)
 ```
 
 * path_to_opera_projection - path to image (z-projection) 
@@ -193,22 +246,43 @@ operetta_annotation.image_grid(path_to_opera_projection, img_length, img_width)
 * img_length - number of pictures for images included in y-axis [from 'image_sequences' function]
 * img_width - number of pictures for images included in x-axis [from 'image_sequences' function]
 
-##### Examples:
 
-##### Example of above image on lens x40
+###### Displayed parameters for image merging adjustment:
+
+* size - the size of the displayed image (adjustable with the scroll of the mouse during real time)
+* Enter id of image: user provides comma-separated numbers of the index for the part of the image that part raw data will be used for further analysis (e.g. for further analysis by AI/ML algorithms)
+
+###### Displayed options for image merging adjustment:
+
+* apply - saving the list of indexes of chosen parts (images) to the python variable -> (numbers_of_pictures)
+
+
+##### Example:
+
+
+```
+numbers_of_pictures = operetta_annotation.image_grid('projection_chanel_ch2.png', img_length, img_width)
+```
 
 <p align="center">
-<img  src="https://github.com/jkubis96/Operetta_tool/blob/main/fig/select3.bmp?raw=true" alt="drawing" width="600" />
+<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/grid.bmp" alt="drawing" width="600" />
 </p>
 
 
-##### Other lens examples:
+#### Examples of images grid for various microscope lens:
 
 ##### Image on lens x20
 
 <p align="center">
 <img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/select2.bmp" alt="drawing" width="600" />
 </p>
+
+##### Image on lens x40
+
+<p align="center">
+<img  src="https://github.com/jkubis96/Operetta_tool/blob/main/fig/select3.bmp?raw=true" alt="drawing" width="600" />
+</p>
+
 
 ##### Image on lens x63
 
@@ -219,7 +293,7 @@ operetta_annotation.image_grid(path_to_opera_projection, img_length, img_width)
 
 
 
-#### 9. Split images from different chanels
+#### 10. Split images from different chanels
 
 ```
 operetta_annotation.split_chanels(path_to_images, path_to_save)
@@ -238,16 +312,24 @@ operetta_annotation.split_chanels(path_to_images, path_to_save)
 
 
 
-#### 10. Separation of selected stacks of images by indexes into separate directories
+#### 11. Separation of selected stacks of images by indexes into separate directories
 
 ```
 operetta_annotation.select_pictures(image_dictinary, path_to_images, path_to_save, numbers_of_pictures)
 ```
 
-
+* image_dictinary (imgs) - a set of images in the correct order [from 'image_sequences' function]
 * path_to_images - path to directory including raw Opera images ('Images') or separate channels directory, eg. ('ch1','ch2')
 * path_to_save - path to the directory for saving chosen by indexes images stacks
 * numbers_of_pictures - list of choosen pictures [1,2,3,10,11,21,...]
+
+
+##### Example:
+
+
+```
+operetta_annotation.select_pictures(imgs, 'ch2', 'selected_images', numbers_of_pictures)
+```
 
 
 ##### Directories with separated chosen stacks of raw Opera images
