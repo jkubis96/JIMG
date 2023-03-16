@@ -107,7 +107,7 @@ xml_file, figure_in = operetta_annotation.repair_blanks(xml_file)
 
 
 <p align="center">
-<img  src="hhttps://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/opera1.bmp" alt="drawing" width="600" />
+<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/opera1.bmp" alt="drawing" width="600" />
 </p>
 
 
