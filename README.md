@@ -281,7 +281,7 @@ cv2.imwrite('merged_projection.png', merged_projection)
 <img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/merged.bmp" alt="drawing" width="600" />
 </p>
 
-#### 8.1 Resize projection - *if required*
+#### 8.1. Resize projection - *if required*
 
 ```   
 resized_image, resized_metadata = operetta_annotation.resize_projection(image, metadata = None, height = None, width = None, resize_factor = None)
@@ -305,7 +305,7 @@ resized_image, resized_metadata = operetta_annotation.resize_projection(image, m
 
 
 
-#### 8.2 Add scalebar - *if required*
+#### 8.2. Add scalebar - *if required*
 
 ```   
 scaled_image = operetta_annotation.add_scalebar(image, metadata)
@@ -345,7 +345,7 @@ cv2.imwrite('merged_projection_scale.png', merged_projection_scale)
 </p>
 
 
-#### 8.3 Loading previously saved image
+#### 8.3. Loading previously saved image
 
 ```   
 loaded_image = cv2.imread('image.png', cv2.IMREAD_ANYDEPTH | cv2.IMREAD_COLOR)
@@ -391,20 +391,20 @@ numbers_of_pictures = operetta_annotation.image_grid('merged_projection.png', im
 
 #### Examples of images grid for various microscope magnification:
 
-##### Image on lens x20
+##### Image magnification x20
 
 <p align="center">
 <img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/select2.bmp" alt="drawing" width="600" />
 </p>
 
-##### Image on lens x40
+##### Image magnification x40
 
 <p align="center">
 <img  src="https://github.com/jkubis96/Operetta_tool/blob/main/fig/select3.bmp?raw=true" alt="drawing" width="600" />
 </p>
 
 
-##### Image on lens x63
+##### Image magnification x63
 
 <p align="center">
 <img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/select1.bmp" alt="drawing" width="600" />
@@ -436,8 +436,6 @@ operetta_annotation.split_channels(path_to_images, path_to_save)
 
 ```
 operetta_annotation.select_pictures(image_dictinary, path_to_images, path_to_save, numbers_of_pictures, chennels)
-
-operetta_annotation.select_pictures(image_dictinary, path_to_images, path_to_save, numbers_of_pictures)
 ```
 
 * image_dictinary (imgs) - a set of images in the correct order [from 'image_sequences' function]
