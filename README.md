@@ -423,7 +423,7 @@ operetta_annotation.split_channels(path_to_images, path_to_save)
 * path_to_save - path to directory for splited channels save
 
 
-###### Figure 3 Directories with images from different channels
+###### Directories with images from different channels
 
 <p align="center">
 <img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/main/fig/ff.bmp" alt="drawing" width="600" />
