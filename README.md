@@ -227,7 +227,7 @@ cv2.imwrite('projection_channel_ch1.png', projection1)
 ###### Second projection: channel 2 - Alexa488
 ```
 projection2 = operetta_annotation.z_projection('channel_ch2.tiff', stack_check = True)
-cv2.imwrite('projection_channel_ch2.png', projection1)
+cv2.imwrite('projection_channel_ch2.png', projection2)
 ```
 
 <p align="center">
@@ -239,7 +239,7 @@ cv2.imwrite('projection_channel_ch2.png', projection1)
 ###### Third projection: channel 3 - Alexa647
 ```
 projection3 = operetta_annotation.z_projection('channel_ch3.tiff', stack_check = True)
-cv2.imwrite('projection_channel_ch3.png', projection2)
+cv2.imwrite('projection_channel_ch3.png', projection3)
 ```
 
 <p align="center">
