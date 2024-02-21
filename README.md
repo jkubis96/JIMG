@@ -4,10 +4,11 @@
 <br />
 
 
-<div>
-    <img src="https://github.com/jkubis96/Operetta_tool/blob/v.2.0.0/icons/jbs_icon.png?raw=true" alt="drawing" width="250" style="float: right;"/>
-    <img src="https://github.com/jkubis96/Operetta_tool/blob/v.2.0.0/icons/jbi_icon.png?raw=true" alt="drawing" width="250" style="float: right;"/>
-</div>
+
+<p align="right">
+    <img src="https://github.com/jkubis96/Operetta_tool/blob/v.2.0.0/icons/jbs_icon.png?raw=true" alt="drawing" width="250" />
+    <img src="https://github.com/jkubis96/Operetta_tool/blob/v.2.0.0/icons/jbi_icon.png?raw=true" alt="drawing" width="250" />
+</p>
 
 
 
@@ -216,7 +217,7 @@ Options for loading and saving project
 <br />
 
 
- * * Browse - select path to the project [*.pjm]
+  * Browse - select path to the project [*.pjm]
 
  * Load - load project metadata
 
