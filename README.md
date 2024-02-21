@@ -5,14 +5,15 @@
 <br />
 
 
-<center>
+
 
 <div style="display: inline-block;">
     <img src="https://github.com/jkubis96/Operetta_tool/blob/v.2.0.0/icons/jbs_icon.png?raw=true" alt="drawing" width="250" />
     <img src="https://github.com/jkubis96/Operetta_tool/blob/v.2.0.0/icons/jbi_icon.png?raw=true" alt="drawing" width="250" />
 </div>
 
-</center>
+
+<br />
 
 
 ### Author: Jakub Kubiś 
@@ -22,6 +23,9 @@
  Polish Academy of Sciences<br />
  Department of Molecular Neurobiology<br />
 </div>
+
+
+<br />
 
 
 ## Description
@@ -112,7 +116,7 @@ pip install Operetta-tool
 
 #### Python users:
 
-Python console:
+
 
 ```
 pip install Operetta-tool
@@ -160,6 +164,8 @@ This chapter below will present all operations that the application allowed to c
 
 <br />
 
+<br />
+
 
 ### 1. Start <a id="start"></a>
 
@@ -172,6 +178,8 @@ This runs the options for image operations and management
 <img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1%20run.bmp" alt="drawing"/>
 </p>
 
+
+<br />
 
 <br />
 
@@ -243,6 +251,8 @@ Options for loading and saving project
 
 <br />
 
+<br />
+
 
 #### 1.2 Loading metadata <a id="loading-metadata"></a>
 
@@ -287,6 +297,9 @@ Options for loading and adjusting raw microscope images metadata (coordinates, s
 
 <br />
 
+<br />
+
+
 > #### 1.2.1 Core reduce - options
 
 
@@ -319,6 +332,7 @@ Options for loading and adjusting raw microscope images metadata (coordinates, s
 
 <br />
 
+<br />
 
 
 #### 1.3 Concat images <a id="concat-im"></a>
@@ -394,6 +408,7 @@ This runs the options for images concatenation
 
 <br />
 
+<br />
 
 
 #### 1.4 Z-projection <a id="z-projection"></a>
@@ -421,6 +436,9 @@ This runs the options for z-projection of the image from the *.tiff file
 * Load - load selected file
 
 <br />
+
+<br />
+
 
 > #### 1.4.1 Z-selection
 
@@ -471,6 +489,8 @@ This runs the options for z-projection of the image from the *.tiff file
 
 
 * Projection - run projection options
+
+<br />
 
 <br />
 
@@ -583,6 +603,7 @@ This runs the options for z-projection of the image from the *.tiff file
 
 <br />
 
+<br />
 
 
 
@@ -627,6 +648,7 @@ Options for images management and operation
 
 <br />
 
+<br />
 
 > #### 1.5.1 Resize options
 
@@ -682,6 +704,9 @@ Options for images management and operation
 
 <br />
 
+<br />
+
+
 > #### 1.5.2 Save options
 
 
@@ -731,6 +756,7 @@ Options for images management and operation
 
 <br />
 
+<br />
 
 
 #### 1.6 Merge images <a id="img-merge"></a>
@@ -763,6 +789,9 @@ Options for multiple images merging
 
 
 * Merge - run options (window) for selected images merging
+
+
+<br />
 
 <br />
 
@@ -830,6 +859,7 @@ Options for multiple images merging
 <br />
 
 
+<br />
 
 
 #### 1.7 Add scale-bar <a id="add-scalebar"></a>
@@ -859,6 +889,8 @@ Options for multiple images merging
 
 * Add scale - add a scale-bar to the selected image
 
+
+<br />
 
 <br />
 
@@ -963,9 +995,7 @@ Options for multiple images merging
 
 <br />
 
-
-
-
+<br />
 
 
 
@@ -996,6 +1026,8 @@ Options for image annotation
 
 * Annotate - draw annotation on the selected image
 
+
+<br />
 
 <br />
 
@@ -1095,8 +1127,7 @@ Options for image annotation
 
 <br />
 
-
-
+<br />
 
 
 #### 1.9 Annotate raw <a id="annotate-raw"></a>
@@ -1126,6 +1157,8 @@ Options for raw images annotation
 
 * Annotate raw - draw annotation on the selected image
 
+
+<br />
 
 <br />
 
@@ -1180,6 +1213,7 @@ Options for raw images annotation
 
 <br />
 
+<br />
 
 
 > #### 1.9.2 Annotation panel
@@ -1322,6 +1356,7 @@ Options for raw images annotation
 <br />
 
 
+<br />
 
 
 > #### 1.9.3 Annotation results
@@ -1364,6 +1399,7 @@ Options for raw images annotation
 
 <br />
 
+<br />
 
 #### 1.10 Exit <a id="exit"></a>
 
@@ -1375,6 +1411,7 @@ Options for raw images annotation
 
 <br />
 
+<br />
 
 
 ### 2. Reset <a id="reset_"></a>
@@ -1387,6 +1424,7 @@ Options for raw images annotation
 
 <br />
 
+<br />
 
 ### 3. Contact <a id="contact"></a>
 
@@ -1398,6 +1436,7 @@ Options for raw images annotation
 
 <br />
 
+<br />
 
 ### 4. Manual <a id="manual"></a>
 
@@ -1410,6 +1449,7 @@ Options for raw images annotation
 
 <br />
 
+<br />
 
 
 ### 5. License <a id="license"></a>
@@ -1422,6 +1462,7 @@ Options for raw images annotation
 
 <br />
 
+<br />
 
 
 ### 6. Exit <a id="exc"></a>
