@@ -1188,6 +1188,8 @@ Options for raw images annotation
 > Based on the grid and numeration, the raw images are selected for annotation
 
 
+<br />
+
 
 > * Size - the size of the image for selection
 
