@@ -5,14 +5,14 @@
 <br />
 
 
-
+<center>
 
 <div style="display: inline-block;">
     <img src="https://github.com/jkubis96/Operetta_tool/blob/v.2.0.0/icons/jbs_icon.png?raw=true" alt="drawing" width="250" />
     <img src="https://github.com/jkubis96/Operetta_tool/blob/v.2.0.0/icons/jbi_icon.png?raw=true" alt="drawing" width="250" />
 </div>
 
-
+</center>
 
 
 ### Author: Jakub Kubiś 
