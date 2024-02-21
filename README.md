@@ -217,7 +217,7 @@ Options for loading and saving project
 <br />
 
 
-  * Browse - select path to the project [*.pjm]
+	* Browse - select path to the project [*.pjm]
 
  * Load - load project metadata
 
