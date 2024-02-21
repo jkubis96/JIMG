@@ -1095,7 +1095,7 @@ Options for image annotation
 <br />
 
 
-> Saved results of annotation 
+> > Saved results of annotation 
 
 <br />
 
@@ -1109,19 +1109,19 @@ Options for image annotation
 <br />
 
 
->> _annotated_image[n] - image with drawn annotation
+> > _annotated_image[n] - image with drawn annotation
 
 
 <br />
 
 
->> _annotated_image[n]_lines - raw annotation lines
+> > _annotated_image[n]_lines - raw annotation lines
 
 
 <br />
 
 
->> _annotated_image[n]_mask - raw mask for drawn annotation
+> > _annotated_image[n]_mask - raw mask for drawn annotation
 
 
 <br />
@@ -1242,8 +1242,8 @@ Options for raw images annotation
 
 <br />
 
-> This panel is the same as in 1.4.2 Z-projection chapter.
-> After Apply changes the Close button will save these changes for all current annotated images.
+> > This panel is the same as in 1.4.2 Z-projection chapter.
+> > After Apply changes the Close button will save these changes for all current annotated images.
 
 
 <br />
@@ -1260,8 +1260,8 @@ Options for raw images annotation
 
 <br />
 
-> This panel is the same as in 1.8.1 Annotation options chapter.
-> After Apply changes the Close button will save annotation for current image.
+> > This panel is the same as in 1.8.1 Annotation options chapter.
+> > After Apply changes the Close button will save annotation for current image.
 
 
 <br />
@@ -1278,7 +1278,7 @@ Options for raw images annotation
 > * Next - change for the next image in the selected images queue
 
 
-> If the image will not be annotated, the Next button means, that the user allows to prepare a mask of the whole image (it means that the whole image is taken into consideration in the study)
+> > If the image will not be annotated, the Next button means, that the user allows to prepare a mask of the whole image (it means that the whole image is taken into consideration in the study)
 
 
 
@@ -1301,7 +1301,7 @@ Options for raw images annotation
 
 > * Save - save whole progress of annotation and back to previous application window for saving or select other images
 
-> <span style="color:red">!!! If next, the results will not save with the 'Save selection' button, and the next analysis will be run with the 'Annotate raw' button, the results of the current analysis will be lost !!!</span>
+> > <span style="color:red">!!! If next, the results will not save with the 'Save selection' button, and the next analysis will be run with the 'Annotate raw' button, the results of the current analysis will be lost !!!</span>
 
 
 <br />
@@ -1381,7 +1381,7 @@ Options for raw images annotation
 
 <br />
 
-> It contains directories for each selected and not excluded from the analysis selected image. Numbers are related to the numbers on the grid image map (image with 'grid_' prefix).  Additionally, this directory is included Z-projection without the grid.
+> > It contains directories for each selected and not excluded from the analysis selected image. Numbers are related to the numbers on the grid image map (image with 'grid_' prefix).  Additionally, this directory is included Z-projection without the grid.
 
 
 <br />
@@ -1399,7 +1399,7 @@ Options for raw images annotation
 
 <br />
 
-> It contains a Z-projection of the current image with a given number (annotated_projection), their raw annotation (annotation), masks (mask_8bit, mask_16bit, and mask_binary), and all raw images that belong to the Z axis (slices) that were not excluded in '1.4.1 Z-selection' chapter step of whole image adjustment 
+> > It contains a Z-projection of the current image with a given number (annotated_projection), their raw annotation (annotation), masks (mask_8bit, mask_16bit, and mask_binary), and all raw images that belong to the Z axis (slices) that were not excluded in '1.4.1 Z-selection' chapter step of whole image adjustment 
 
 
 
