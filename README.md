@@ -165,7 +165,7 @@ This chapter below will present all operations that the application allowed to c
 <br />
 
 
-<span style="color:green">Displayed images can be resized with Window size / Size sliders and also zoomed by pressing and holding the 'Z' button and scrolling by mouse or touchpad in selected part of the image</span>
+<span><font color="green">Displayed images can be resized with Window size / Size sliders and also zoomed by pressing and holding the 'Z' button and scrolling by mouse or touchpad in selected part of the image</font></span>
 
 
 <br />
@@ -217,11 +217,11 @@ Options for loading and saving project
 <br />
 
 
-	* Browse - select path to the project [*.pjm]
+> * Browse - select path to the project [*.pjm]
 
- * Load - load project metadata
+> * Load - load project metadata
 
- * Back - back to the previous application window
+> * Back - back to the previous application window
 
 <br />
 
