@@ -4,10 +4,11 @@
 <br />
 
 
-<div style="display: inline-block;">
+<div style="text-align: right;">
     <img src="https://github.com/jkubis96/Operetta_tool/blob/v.2.0.0/icons/jbs_icon.png?raw=true" alt="drawing" width="250" />
     <img src="https://github.com/jkubis96/Operetta_tool/blob/v.2.0.0/icons/jbi_icon.png?raw=true" alt="drawing" width="250" />
 </div>
+
 
 
 <br />
@@ -214,11 +215,11 @@ Options for loading and saving project
 <br />
 
 
-> * Browse - select path to the project [*.pjm]
+ * Browse - select path to the project [*.pjm]
 
-> * Load - load project metadata
+ * Load - load project metadata
 
-> * Back - back to the previous application window
+ * Back - back to the previous application window
 
 <br />
 
