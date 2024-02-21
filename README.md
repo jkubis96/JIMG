@@ -182,7 +182,7 @@ This runs the options for image operations and management
 <br />
 
 
-##### 1.1 Project manager <a id="project-manager"></a>
+#### 1.1 Project manager <a id="project-manager"></a>
 
 Options for loading and saving project
 
@@ -250,7 +250,7 @@ Options for loading and saving project
 <br />
 
 
-##### 1.2 Loading metadata <a id="loading-metadata"></a>
+#### 1.2 Loading metadata <a id="loading-metadata"></a>
 
 Options for loading and adjusting raw microscope images metadata (coordinates, size, channels, etc.)
 
@@ -293,7 +293,7 @@ Options for loading and adjusting raw microscope images metadata (coordinates, s
 
 <br />
 
-> ###### 1.2.1 Core reduce - options
+> #### 1.2.1 Core reduce - options
 
 
 <br />
@@ -428,7 +428,7 @@ This runs the options for z-projection of the image from the *.tiff file
 
 <br />
 
-> ##### 1.4.1 Z-selection
+> #### 1.4.1 Z-selection
 
 > Options for selecting particular slices that will excluded from the Z-projection
 
@@ -634,7 +634,7 @@ Options for images management and operation
 <br />
 
 
-> ##### 1.5.1 Resize options
+> #### 1.5.1 Resize options
 
 
 <br />
@@ -688,7 +688,7 @@ Options for images management and operation
 
 <br />
 
-> ##### 1.5.2 Save options
+> #### 1.5.2 Save options
 
 
 <br />
@@ -773,7 +773,7 @@ Options for multiple images merging
 <br />
 
 
-> ##### 1.6.1 Merge options
+> #### 1.6.1 Merge options
 
 <br />
 
@@ -838,8 +838,6 @@ Options for multiple images merging
 
 
 
-
-
 #### 1.7 Add scale-bar <a id="add-scalebar"></a>
 
 Options for multiple images merging
@@ -871,7 +869,7 @@ Options for multiple images merging
 <br />
 
 
-> ##### 1.7.1 Scale-bar options
+> #### 1.7.1 Scale-bar options
 
 
 <br />
@@ -1008,7 +1006,7 @@ Options for image annotation
 <br />
 
 
-> ##### 1.8.1 Annotation options
+> #### 1.8.1 Annotation options
 
 
 <br />
@@ -1138,7 +1136,7 @@ Options for raw images annotation
 <br />
 
 
-> ##### 1.9.1 Selecting images for annotate
+> #### 1.9.1 Selecting images for annotate
 
 
 <br />
@@ -1190,7 +1188,7 @@ Options for raw images annotation
 
 
 
-> ##### 1.9.2 Annotation panel
+> #### 1.9.2 Annotation panel
 
 
 <br />
@@ -1332,7 +1330,7 @@ Options for raw images annotation
 
 
 
-> ##### 1.9.3 Annotation results
+> #### 1.9.3 Annotation results
 
 <br />
 
