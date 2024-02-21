@@ -1,10 +1,7 @@
-# JBioImaging - operetta_tool image manager application
+# JIMG - tool and application for high-resolution image management
 
-#### JBioImaging is a part of JBioSystem responsible for application creation in the biological images handling
 
 <br />
-
-
 
 
 <div style="display: inline-block;">
@@ -12,6 +9,12 @@
     <img src="https://github.com/jkubis96/Operetta_tool/blob/v.2.0.0/icons/jbi_icon.png?raw=true" alt="drawing" width="250" />
 </div>
 
+
+<br />
+
+#### JBioImaging is a part of JBioSystem responsible for application creation in the biological images handling
+
+<br />
 
 <br />
 
