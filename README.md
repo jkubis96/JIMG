@@ -1352,7 +1352,7 @@ Options for raw images annotation
 <br />
 
 
-	* Directories with annotated images (directories with 'img_' prefix)
+> * Directories with annotated images (directories with 'img_' prefix)
 
 
 <br />
@@ -1364,7 +1364,7 @@ Options for raw images annotation
 
 <br />
 
-	It contains a Z-projection of the current image with a given number (annotated_projection), their raw annotation (annotation), masks (mask_8bit, mask_16bit, and mask_binary), and all raw images that belong to the Z axis (slices) that were not excluded in '1.4.1 Z-selection' chapter step of whole image adjustment 
+> It contains a Z-projection of the current image with a given number (annotated_projection), their raw annotation (annotation), masks (mask_8bit, mask_16bit, and mask_binary), and all raw images that belong to the Z axis (slices) that were not excluded in '1.4.1 Z-selection' chapter step of whole image adjustment 
 
 
 
@@ -1376,7 +1376,7 @@ Options for raw images annotation
 <br />
 
 
-	Exit from 'Images operations' and return to Main menu
+> Exit from 'Images operations' and return to Main menu
 
 
 <br />
@@ -1389,7 +1389,7 @@ Options for raw images annotation
 <br />
 
 
-	The Reset button allows removing all current metadata to start a new analysis without re-running the whole application.
+> The Reset button allows removing all current metadata to start a new analysis without re-running the whole application.
 
 <br />
 
@@ -1400,7 +1400,7 @@ Options for raw images annotation
 <br />
 
 
-	It opens window with contact information.
+> It opens window with contact information.
 
 <br />
 
@@ -1411,7 +1411,7 @@ Options for raw images annotation
 <br />
 
 
-	It opens the default web browser with the GitHub directory with manual (present webpage)
+> It opens the default web browser with the GitHub directory with manual (present webpage)
 
 
 <br />
@@ -1424,7 +1424,7 @@ Options for raw images annotation
 <br />
 
 
-	It opens product License [MIT](https://github.com/jkubis96/Operetta_tool/blob/v.2.0.0/LICENSE)
+> It opens product License [MIT](https://github.com/jkubis96/Operetta_tool/blob/v.2.0.0/LICENSE)
 
 <br />
 
@@ -1436,7 +1436,7 @@ Options for raw images annotation
 <br />
 
 
-	It closes the whole application. All not saved results will be lost!
+> It closes the whole application. All not saved results will be lost!
 
 <br />
 
