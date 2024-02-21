@@ -30,7 +30,7 @@
 ## Description
 
 
-<div align="justify"> 
+
 
 	This tool was created for handling high-resolution images from the Opera Phenix Plus High-Content
 	Screening System, including operations such as concatenating raw series of images, z-projection,
@@ -40,7 +40,7 @@
 	Certain elements of this tool can be adapted for data analysis and annotation in other imaging systems.
 	For more information, please feel free to contact us!
 			
-</div>
+
 
 
 <br />
@@ -206,7 +206,7 @@ Options for loading and saving project
 <br />
 
 
-> * Browse - select path to the project - *.pjm
+- Browse - select path to the project - *.pjm
 
 > * Load - load project metadata
 
