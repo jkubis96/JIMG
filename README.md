@@ -147,7 +147,7 @@ Run current version of application.exe file
 
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1%20front.bmp" alt="drawing"/>
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1%20front.bmp" alt="drawing"/>
 </p>
 
 
@@ -165,7 +165,7 @@ This chapter below will present all operations that the application allowed to c
 
 
 <p align="center">
-<img  src="https://github.com/jkubis96/Operetta_tool/raw/v.2.0.0/fig/before_zoom.bmp" alt="drawing" />
+<img  src="https://github.com/jkubis96/JIMG/raw/v.2.0.0/fig/before_zoom.bmp" alt="drawing" />
 </p>
 
 <br />
@@ -187,7 +187,7 @@ This runs the options for image operations and management
 
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1%20run.bmp" alt="drawing"/>
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1%20run.bmp" alt="drawing"/>
 </p>
 
 
@@ -204,7 +204,7 @@ Options for loading and saving project
 
 
 <p align="center">
-<img  src="https://github.com/jkubis96/Operetta_tool/blob/v.2.0.0/fig/1.p.png?raw=true" alt="drawing"  />
+<img  src="https://github.com/jkubis96/JIMG/blob/v.2.0.0/fig/1.p.png?raw=true" alt="drawing"  />
 </p>
 
 
@@ -217,7 +217,7 @@ Options for loading and saving project
 
 
 <p align="center">
-<img  src="https://github.com/jkubis96/Operetta_tool/blob/v.2.0.0/fig/1.pl.png?raw=true" alt="drawing" />
+<img  src="https://github.com/jkubis96/JIMG/blob/v.2.0.0/fig/1.pl.png?raw=true" alt="drawing" />
 </p>
 
 <br />
@@ -239,7 +239,7 @@ Options for loading and saving project
 <br />
 
 <p align="center">
-<img  src="https://github.com/jkubis96/Operetta_tool/blob/v.2.0.0/fig/1.ps.png?raw=true" alt="drawing" />
+<img  src="https://github.com/jkubis96/JIMG/blob/v.2.0.0/fig/1.ps.png?raw=true" alt="drawing" />
 </p>
 
 
@@ -274,7 +274,7 @@ Options for loading and adjusting raw microscope images metadata (coordinates, s
 
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.1%20load%20metadata.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.1%20load%20metadata.bmp" alt="drawing" />
 </p>
 
 
@@ -296,7 +296,7 @@ Options for loading and adjusting raw microscope images metadata (coordinates, s
 <br />
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.1.1%20display%20core.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.1.1%20display%20core.bmp" alt="drawing" />
 </p>
 
 
@@ -318,7 +318,7 @@ Options for loading and adjusting raw microscope images metadata (coordinates, s
 <br />
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.1.2%20cores%20reducing.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.1.2%20cores%20reducing.bmp" alt="drawing" />
 </p>
 
 
@@ -356,7 +356,7 @@ This runs the options for images concatenation
 
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.2%20concatenate%20images.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.2%20concatenate%20images.bmp" alt="drawing" />
 </p>
 
 
@@ -433,7 +433,7 @@ This runs the options for z-projection of the image from the *.tiff file
 
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.3.1%20tiff%20load%20-%20z%20projection.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.3.1%20tiff%20load%20-%20z%20projection.bmp" alt="drawing" />
 </p>
 
 
@@ -462,7 +462,7 @@ This runs the options for z-projection of the image from the *.tiff file
 
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.3.2%20slices%20selection%20-%20z%20projection.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.3.2%20slices%20selection%20-%20z%20projection.bmp" alt="drawing" />
 </p>
 
 
@@ -517,7 +517,7 @@ This runs the options for z-projection of the image from the *.tiff file
 
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.3.3%20z%20projection.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.3.3%20z%20projection.bmp" alt="drawing" />
 </p>
 
 
@@ -530,7 +530,7 @@ This runs the options for z-projection of the image from the *.tiff file
 
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.3.3%20z%20projection%202.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.3.3%20z%20projection%202.bmp" alt="drawing" />
 </p>
 
 
@@ -627,7 +627,7 @@ Options for images management and operation
 
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.4%20manager.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.4%20manager.bmp" alt="drawing" />
 </p>
 
 
@@ -669,7 +669,7 @@ Options for images management and operation
 
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.4.1%20manager%20-%20resize.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.4.1%20manager%20-%20resize.bmp" alt="drawing" />
 </p>
 
 
@@ -726,7 +726,7 @@ Options for images management and operation
 
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.4.2%20manager%20-%20save.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.4.2%20manager%20-%20save.bmp" alt="drawing" />
 </p>
 
 
@@ -779,7 +779,7 @@ Options for multiple images merging
 
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.5.1%20merge%20select.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.5.1%20merge%20select.bmp" alt="drawing" />
 </p>
 
 
@@ -818,7 +818,7 @@ Options for multiple images merging
 <br />
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.4.2%20manager%20-%20save.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.5.2%20merge%20images.bmp" alt="drawing" />
 </p>
 
 
@@ -882,7 +882,7 @@ Options for multiple images merging
 
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.6%20scalebar.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.6%20scalebar.bmp" alt="drawing" />
 </p>
 
 
@@ -917,7 +917,7 @@ Options for multiple images merging
 <br />
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.6.1%20add%20scale.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.6.1%20add%20scale.bmp" alt="drawing" />
 </p>
 
 
@@ -1019,7 +1019,7 @@ Options for image annotation
 
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.7%20annotate.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.7%20annotate.bmp" alt="drawing" />
 </p>
 
 
@@ -1054,7 +1054,7 @@ Options for image annotation
 <br />
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.7.1%20annotate%20-%20annotate.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.7.1%20annotate%20-%20annotate.bmp" alt="drawing" />
 </p>
 
 
@@ -1107,7 +1107,7 @@ Options for image annotation
 
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.7.2%20annotate%20-%20results.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.7.2%20annotate%20-%20results.bmp" alt="drawing" />
 </p>
 
 
@@ -1150,7 +1150,7 @@ Options for raw images annotation
 
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.8%20annotation%20raw.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.8%20annotation%20raw.bmp" alt="drawing" />
 </p>
 
 
@@ -1185,7 +1185,7 @@ Options for raw images annotation
 <br />
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.8.1%20annotation%20raw%20-%20select%20images.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.8.1%20annotation%20raw%20-%20select%20images.bmp" alt="drawing" />
 </p>
 
 
@@ -1236,7 +1236,7 @@ Options for raw images annotation
 <br />
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.8.1.1%20annotation%20raw%20-%20raw.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.8.1.1%20annotation%20raw%20-%20raw.bmp" alt="drawing" />
 </p>
 
 
@@ -1257,7 +1257,7 @@ Options for raw images annotation
 <br />
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.8.1.1.1%20annotation%20raw%20-%20raw%20-%20adjust.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.8.1.1.1%20annotation%20raw%20-%20raw%20-%20adjust.bmp" alt="drawing" />
 </p>
 
 
@@ -1275,7 +1275,7 @@ Options for raw images annotation
 <br />
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.8.1.1.2%20annotation%20raw%20-%20raw%20-%20annotate.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.8.1.1.2%20annotation%20raw%20-%20raw%20-%20annotate.bmp" alt="drawing" />
 </p>
 
 
@@ -1329,7 +1329,7 @@ Options for raw images annotation
 <br />
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.8.1.2%20annotation%20raw%20-%20raw%20-%20save%20results.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.8.1.2%20annotation%20raw%20-%20raw%20-%20save%20results.bmp" alt="drawing" />
 </p>
 
 
@@ -1383,7 +1383,7 @@ Options for raw images annotation
 <br />
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.8.1.2.1%20annotation%20raw%20-%20raw%20-%20save%20results%20outside.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.8.1.2.1%20annotation%20raw%20-%20raw%20-%20save%20results%20outside.bmp" alt="drawing" />
 </p>
 
 
@@ -1401,7 +1401,7 @@ Options for raw images annotation
 <br />
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/jkubis96/Operetta_tool/v.2.0.0/fig/1.1.8.1.2.2%20annotation%20raw%20-%20raw%20-%20empty_annotation.bmp" alt="drawing" />
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.8.1.2.2%20annotation%20raw%20-%20raw%20-%20save%20results%20inside.bmp" alt="drawing" />
 </p>
 
 
