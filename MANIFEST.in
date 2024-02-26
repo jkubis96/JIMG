@@ -1,1 +1,3 @@
-include operetta/jbsicon.ico
+recursive-include JIMG/icons *
+recursive-include JIMG/app *
+recursive-include JIMG/functions *

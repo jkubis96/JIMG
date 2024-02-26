@@ -75,6 +75,10 @@ For more information, please feel free to contact us!
 4. [Manual](#manual) 
 5. [License](#license) 
 6. [Exit](#exc)
+7. [Console code](#code)\
+7.1 [Images and metadata handling](#metadata-code)\
+7.2 [Image concatenation](#concatenation-code)\
+7.3 [Image adjustment](#adjust-code)
 
 
 
@@ -105,7 +109,7 @@ pip install Operetta-tool
 
 #### For Windows users:
 
-* [Download](https://download944.mediafire.com/txbbi6k01zggKXihNoHPRFSPRtP8CDizS-d13Ue25aC3V3VRQgRJU6_0t1VFo0_DAXz_Qdk3wX-8fNiQ9OUfnEdNei5T6fqKZKQVFC9y5o5uASGBKttYhrXLqwDWV6-BgLq_dnyIB0PMhUeVoQ7QB8IaPF1_6Oo2lJo3r4suVNwuwA8/47v297dlda78zcm/JIMG+v.2.0.exe)
+* [Download](https://www.mediafire.com/file/nxc1fp0tkygu2tj/JIMG_v.2.0.exe/file)
 
 
 <br />
@@ -123,9 +127,11 @@ pip install Operetta-tool
 #### Python users:
 
 
+Python console:
 
 ```
-pip install Operetta-tool
+from JIMG.app.load_app import run
+run()
 ```
 
 
@@ -1486,3 +1492,871 @@ Options for raw images annotation
 
 
 
+### 7. Console code <a id="code"></a>
+
+
+
+
+<br />
+
+
+#### 7.1 Images and metadata handling <a id="metadata-code"></a>
+
+Some of the functions can be run from the Python console and used for creating automatic or semiautomatic pipelines for image analysis.
+
+<br />
+
+Loading library:
+
+```
+from JIMG.functions import jimg as jg
+```
+
+
+<br />
+
+
+##### 7.1.1 Metadata loading
+
+<br />
+
+Function:
+
+```
+xml_load(path_to_xml)
+```
+
+> Description:\
+  This function loads the images index file and collects metadata.
+
+
+> Args:
+
+  >* path_to_xml (str) - path to a image metadata
+
+> Returns:
+
+  >* image_info (pd.DataFrame) - list of images with numeration and coordinates
+  >* metadata (dict) - images information
+
+
+<br />
+
+Example:
+
+```
+img_info, metadata =  jg.xml_load(path_to_xml = path_to_inx)
+```
+
+<br />
+
+Output:
+
+
+<br />
+
+> Metadata
+
+<p align="center">
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/metadata.bmp" alt="drawing" />
+</p>
+
+
+<br />
+
+> Image info
+
+<p align="center">
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/img_info.bmp" alt="drawing" />
+</p>
+
+
+
+<br />
+
+
+##### 7.1.2 Metadat repairing
+
+
+<br />
+
+Function:
+
+```
+repair_image(image_info, dispaly_plot = True)
+```
+
+> Description:\
+  This function is used for repairing microscope image-taking errors.
+  The full images (core of the image) obtained from microscopes such as the Opera Pheonix consist of many smaller (raw) images.
+  Sometimes microscope takes photos out of the targeted place or misses one photo and then the full photo can not be merged.
+  This function allows for automatic repair of the core of the full image.
+  If the core is still not appropriate use manual repair by manual_outlires() function.
+    
+
+
+> Args:
+
+  > * image_info (pd.DataFrame) - list of images with numeration obtained from the xml_load() function
+  > * dispaly_plot (bool) - show the graph in the console. Default: True
+  
+> Returns:
+
+  > * fig - location and numeration of raw images in the main core of the full image
+  > * image_info (DataFrame) - adjusted image_info
+
+
+<br />
+
+
+
+Function:
+
+```
+manual_outlires(image_info, list_of_out = [], dispaly_plot = False)
+```
+
+> Description:\
+   This function is used for repairing microscope image-taking errors.
+   The full images (core of the image) obtained from microscopes such as the Opera Pheonix consist of many smaller (raw) images.
+   Sometimes microscope takes photos out of the targeted place or misses one photo and then the full photo can not be merged.
+   This function allows for checking how the raw images are placed and manually removing some of them from further analysis.
+    
+
+
+> Args:
+
+  > * image_info (pd.DataFrame) - list of images with numeration obtained from the xml_load() function
+  > * list_of_out (list) - list with numbers of images to exclude. If '[]' only the graph will presented
+  >> *in first - run user should provide an empty list to check the graph and decide, which potential images should be excluded       
+  > * dispaly_plot (bool) - show the graph in the console. Default: False
+
+
+> Returns:
+  > * fig - location and numeration of raw images in the main core of the full image
+  > * image_info (DataFrame) - adjusted image_info
+
+  
+<br />
+
+
+
+
+Examples:
+
+```
+img_info, figure1 = jg.repair_image(image_info=img_info, dispaly_plot = True)
+
+img_info, figure2 = jg.manual_outlires(image_info = img_info, list_of_out = [], dispaly_plot = False)
+
+```
+
+<br />
+
+Output:
+
+
+<br />
+
+> Befroe repairing ex. 1
+
+<p align="center">
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/lack.bmp" alt="drawing" />
+</p>
+
+
+<br />
+
+> After repairing ex. 1
+
+<p align="center">
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/lack_filled.bmp" alt="drawing" />
+</p>
+
+
+
+<br />
+
+
+<br />
+
+> Befroe repairing ex. 2
+
+<p align="center">
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/outlires.bmp" alt="drawing" />
+</p>
+
+
+<br />
+
+> After repairing ex. 2
+
+<p align="center">
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/outlires_repaired.bmp" alt="drawing" />
+</p>
+
+
+
+<br />
+
+
+##### 7.1.2 Split channels
+
+<br />
+
+Function:
+
+```
+split_channels(path_to_images, path_to_save)
+```
+
+> Description:\
+  This function goes to a directory with raw images obtained from Opera Phoenix and divides them based on image channel number into separate directories.    
+
+
+> Args:
+
+  > * path_to_images (str) - path to a images
+  > * path_to_save (str) - path to save directories with raw images divided by channels 
+
+> Returns:
+
+  > Directories: ch1, ch2, ...
+
+
+<br />
+
+
+Example:
+
+```
+jg.split_channels(path_to_images = 'Images', path_to_save = '')
+```
+
+<br />
+
+Output:
+
+
+<br />
+
+> Splited directories
+
+<p align="center">
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/channel_split.bmp" alt="drawing" />
+</p>
+
+
+<br />
+
+
+
+
+#### 7.2 Image concatenation <a id="concatenation-code"></a>
+
+
+
+<br />
+
+Function:
+
+```
+image_sequences(image_info)
+```
+
+> Description:\
+  This function calculates the image queue in the full image core.
+  The images in metadata usually are in a different order than the order of the images taken by the software of microscope.
+  This function allows the proper images queue, length, and width necessary for images to concatenate into a full image core.
+    
+    
+> Args:
+
+  > * image_info (pd.DataFrame) - list of images with numeration obtained from the xml_load() function and repired by repair_image() / manual_outlires()
+
+> Returns:
+
+  > * image_queue (pd.DataFrame) - image_info with additional raw numeration (queue of images taken by the microscope) of images in the full image core
+  > * img_length (int) - length (number of raw images) included in the full image core
+  > * img_width (int) - width (number of raw images) included in the full image core
+
+
+<br />
+
+
+
+Function:
+
+```
+# Functions for getting info about available cores/threads 
+
+get_number_of_cores()
+get_number_of_threads()
+
+
+image_concatenate(path_to_images, path_to_save, image_queue, metadata, img_length, img_width, overlap, channels, resize = 2, n_proc = 4, par_type = 'processes')
+```
+
+> Description:\
+  This function is used to create a full microscope image by concatenation raw images in a parallel way.
+  The full image core is based on image metadata and raw images occurrence modified by manual_outlires() and repair_image() functions.
+
+    
+
+
+> Args:
+
+  > * path_to_images (str) - path to raw images
+  > * path_to_save (str) - path to save concatenated the full image in *.tiff format
+  > * image_queue (pd.DataFrame) - data frame with calculated raw images queue from image_sequences() function
+  > * metadata (dict) - metadata for the microscope image obtained from xml_load() function
+  > * img_length (int) - length (number of raw images) included in the full image core
+  > * img_width (int) - width (number of raw images) included in the full image core
+  > * overlap (float) - overlap of raw images to their neighbor images' horizontal and vertical axis
+  >> *eg. 0.05 <-- 5% overlap
+  > * channels (list) - list of channels to create the concatenated full image. The image for every channel will be saved as a separate file. Information about available channels in metadata loaded from xml_load()
+  >> *eg. ['ch1','ch2']
+  > * resize (int) - resize factor for the full image size (dividing by factor height x width of every raw image)
+  > * n_proc (int) - number of processes/threads for the image concatenatenation process conducted. Depends on 'par_type'.
+  >> *avaiable number of threads / cores avaiable from get_number_of_cores() / get_number_of_threads()
+  > * par_type (str) - parallelization method ['threads', 'processes']. Default: 'processes'
+         
+
+
+> Returns:
+
+  > Image: The full image concatenated of raw single images with given by user concatenation setting saved in *.tiff format in the given directory.
+
+  
+<br />
+
+
+
+
+
+Example 1:
+
+```
+image_queue, img_length, img_width = jg.image_sequences(image_info)
+
+
+# Multiprocessing (cores) - parallelization
+
+n_cor = jg.get_number_of_cores()
+n_cor = n_cor - 2
+
+path_to_images = 'Images'
+path_to_save = ''
+overlap = 0.05
+channels = ['ch1', 'ch2']
+
+jg.image_concatenate(path_to_images, path_to_save, image_queue, metadata, img_length, img_width, overlap, channels, resize = 2, n_proc = n_cor, par_type = 'processes'):
+
+```
+
+<br />
+
+
+Example 2:
+
+```
+image_queue, img_length, img_width = jg.image_sequences(image_info)
+
+
+# Multithreads (threads) - parallelization
+
+n_threads = jg.get_number_of_threads()
+n_threads = n_threads - 2
+
+path_to_images = 'Images'
+path_to_save = ''
+overlap = 0.05
+channels = ['ch1', 'ch2']
+
+jg.image_concatenate(path_to_images, path_to_save, image_queue, metadata, img_length, img_width, overlap, channels, resize = 2, n_proc = n_threads, par_type = 'threads'):
+
+```
+
+
+<br />
+
+
+
+#### 7.3 Image adjustment <a id="adjust-code"></a>
+
+
+<br />
+
+
+##### 7.3.1 Tiff operation
+
+<br />
+
+Function:
+
+```
+load_tiff(path_to_tiff)
+```
+
+> Description:\
+  This function is used for loading *.tiff files. 
+  When the image is not 16-bit, that function will convert it to the 16-bit image. 
+
+
+> Args:
+
+  > * path_to_tiff (str) - path to *.tiff file   
+
+> Returns:
+
+  > * stack (np.ndarray) - loaded image returned to a variable
+
+
+
+<br />
+
+Function:
+
+```
+read_tiff_meta(file_path)
+```
+
+> Description:\
+  This function allows load metadata included in *.tiff file.
+
+
+> Args:
+
+  > * file_path (str) - path to the *.tiff file
+
+> Returns:
+
+  > * z - z-spacing [µm]
+  > * y - resolution in y-axis pixels [µm/px]
+  > * x - resolution in y-axis pixels [µm/px]
+
+
+<br />
+
+
+
+Function:
+
+```
+resize_tiff(image, metadata = None, height = None, width = None, resize_factor = None)
+```
+
+> Description:\
+  This function gets previously loaded *.tiff file (3d-array) and resizes each image in the Z-axis.
+  
+  !WARNING!
+       
+      You can change only one parameter in each resizing operation.
+      This restriction is designed to preserve the biological proportions
+      When you set more than one parameter, only the first parameter
+      in the queue will be changed in a single resizing operation.
+      The queue is set up: first height, second width, and last resize factor.
+
+
+> Args:
+
+  > * image (np.ndarray) - input *. tiff image (3d-array)
+  > * metadata (dict | None) - metadata for the image from xml_load() function. If None the metadata correction is ommited.
+  > * height (int) - new height value 
+  > * width (int) - new width value
+  > * resize_factor (int) - resize factor (dividing original height x width)
+       
+
+> Returns:
+
+   > if metadata == None:
+            > * resized_image (np.ndarray) - resized image in *.tiff format
+        
+   > if metadata != None:
+            > * resized_image (np.ndarray) - resized image in *.tiff format
+            > * res_metadata (dict) -  metadata corrected by the resolution changes
+
+ 
+
+<br />
+
+
+Function:
+
+```
+save_tiff(tiff_image, path_to_save, metadata = None)
+```
+
+
+> Description:\
+  This function gets previously loaded *.tiff file (3d-array) and saves it.
+
+
+> Args:
+
+  > * tiff_image (np.ndarray) - input *. tiff image (3d-array)
+  > * path_to_save (str) - path to save *.tiff. Required: file name with *.tiff extension
+  > * metadata (dict | None) - metadata to the file from xml_load() function or after using resize_tiff()
+  >> *if metadata == None, any metadata will not attached to the *.tiff file
+
+
+> Returns:
+
+  > Saved file under the given path
+
+
+<br />
+
+
+
+Example:
+
+```
+tiff_file = jg.load_tiff(path_to_tiff = 'channel_ch1.tiff')
+
+
+# loading resolution information from *.tiff file
+z, y, x, = jg.read_tiff_meta(file_path = 'res.tiff')
+
+print(z)
+print(y)
+print(x)
+
+#################################################
+
+
+# loading whole metadata to the image
+
+path_to_inx = 'Images/Index.idx.xml'
+
+_, metadata =  jg.xml_load(path_to_xml = path_to_inx)
+
+
+# adjust resolution information in metadata (if the tiff file during concatenation was resized; in the function: image_concatenate( ) the value of resize > 1 - not original resolution)
+
+metadata['X_resolution[um/px]'] = x
+metadata['Y_resolution[um/px]'] = y
+
+
+# resize 
+
+resized_tiff, res_metadata = jg.resize_tiff(image = tiff_file, metadata = metadata, height = None, width = None, resize_factor = 2)
+
+# save
+
+jg.save_tiff(tiff_image = jg.resized_tiff, path_to_save = 'resized_tiff.tiff', metadata = res_metadata)
+
+```
+
+<br />
+
+
+
+##### 7.3.2 Image operations (z-projection, adjustment, loading, saving, merging)
+
+<br />
+
+Function:
+
+```
+display_preview(projection)
+```
+
+> Description:\
+  This function allows you to quickly preview images.     
+
+
+
+> Args:
+
+  > * image (np.ndarray) - input image
+
+> Returns:
+
+  > Image: display inputted image
+
+
+
+<br />
+
+Function:
+
+```
+z_projection(tiff_object, projection_type = 'avg')
+```
+
+> Description:\
+  This function conducts Z projection of the stacked (3D array) image, eg. loaded to a variable with load_tiff()
+
+
+> Args:
+
+  > * tiff_object (np.ndarray) - stacked (3D) image 
+  > * projection_type (str) - type of the stacked image projection of Z axis ['avg', 'median', 'min', 'max', 'std']
+    
+
+> Returns:
+
+  > * img (np.ndarray) - image projection returned to a variable
+
+
+
+<br />
+
+
+
+Function:
+
+```
+equalizeHist_16bit(image_eq)
+```
+
+> Description:\
+  This function conducts global histogram equalization on the inputted image.
+ 
+
+> Args:
+
+  > * image_eq (np.ndarray) - input image
+
+
+> Returns:
+
+  > * image_eq_16 (np.ndarray) - image after the global histograme equalization adjustment
+ 
+
+<br />
+
+
+Function:
+
+```
+clahe_16bit(img, kernal = (100, 100))
+```
+
+
+> Description:\
+  This function conducts CLAHE algorithm on the inputted image.
+
+
+> Args:
+
+  > * img (np.ndarray) - input image
+  > * kernal (tuple) - the size of the kernel as the field of CLAHE algorithm adjustment through the whole image in the subsequent iterations eg. (100,100)
+
+> Returns:
+
+  > * img (np.ndarray) - image after the CLAHE adjustment
+
+
+<br />
+
+
+Function:
+
+```
+adjust_img_16bit(img, color = 'gray', max_intensity = 65535, min_intenisty = 0, brightness = 100, contrast = 1, gamma = 1)
+```
+
+
+> Description:\
+  This function allows manually adjusting image parameters and returns the adjusted image.
+
+
+> Args:
+
+  > * img (np.ndarray) - input image
+  > * color (str) - color of the image (RGB) ['green', 'blue', 'red', 'yellow', 'magenta', 'cyan']
+  > * max_intensity (int) - upper threshold for pixel value. The pixel that exceeds this value will change to the set value
+  > * min_intenisty (int) - lower threshold for pixel value. The pixel that is down to this value will change to 0
+  > * brightness (int) - value for image brightness [0-200]. Default: 100 (base value)
+  > * contrast (float | int) - value for image contrast [0-5]. Default: 1 (base value)
+  > * gamma (float | int) - value for image brightness [0-5]. Default: 1 (base value)
+
+> Returns:
+
+  > * img_gamma (np.ndarray) - image after the parameters adjustment
+
+
+<br />
+
+
+Function:
+
+```
+resize_projection(image, metadata = None, height = None, width = None, resize_factor = None):
+```
+
+
+> Description:\
+  This function gets an image and resizes it.
+
+  !WARNING!
+       
+      You can change only one parameter in each resizing operation.
+      This restriction is designed to preserve the biological proportions
+      When you set more than one parameter, only the first parameter
+      in the queue will be changed in a single resizing operation.
+      The queue is set up: first height, second width, and last resize factor.
+
+
+> Args:
+
+  > * image (np.ndarray) - input image
+  > * metadata (dict | None) - metadata for the image from xml_load() function. If None the metadata correction is ommited
+  > * height (int) - new height value 
+  > * width (int) - new width value
+  > * resize_factor (int) - resize factor (dividing original height x width)
+       
+       
+
+> Returns:
+
+  > * img_gamma (np.ndarray) - image after the parameters adjustment
+
+
+<br />
+
+
+Function:
+
+```
+save_image(image, path_to_save)
+```
+
+
+> Description:\
+  This function gets an image and saves it.
+
+
+> Args:
+
+  > * image (np.ndarray) - input image
+  > * path_to_save (str) - path to save. Required: file name with *.png, *.tiff or *.tif extension
+      
+
+> Returns:
+
+  > Saved file under the given path
+
+
+<br />
+
+
+
+Function:
+
+```
+load_image(path)
+```
+
+
+> Description:\
+  This function allows the load of the image. When the image is not 16-bit, that function will convert it to the 16-bit image.     
+
+
+> Args:
+
+  > * path (str) - path to the image
+  
+
+> Returns:
+
+  > * img (np.ndarray) - 16-bit image loaded to a variable
+
+
+<br />
+
+
+Function:
+
+
+```
+merge_images(image_list:list, intensity_factors:list = [])
+```
+
+
+> Description:\
+  This function allows the merging of image projections from different channels.   
+
+
+> Args:
+
+  > * image_list (list(np.ndarray)) - list of images for merging
+  >> *all images in the list must be in the same shape and size!!!      
+  > * intensity_factors (list(float)) - list of intensity values for every image provided in image_list. Base value for each image should be 1.
+  >> *value < 1 decrease intensity 
+  >> *value > 1 increase intensity 
+  
+
+> Returns:
+
+  > * result (np.ndarray) - image after the merging
+
+
+<br />
+
+
+
+
+Examples:
+
+
+```
+projection = jg.z_projection(tiff_object = tiff_file, projection_type = 'median')
+
+
+jg.display_preview(projection)
+ 
+
+eq_pro = jg.equalizeHist_16bit(projection)
+
+
+jg.display_preview(eq_pro)
+
+
+clahe_pro = jg.clahe_16bit(eq_pro, kernal = (100, 100))
+
+
+jg.display_preview(clahe_pro)
+
+
+adj_image = jg.adjust_img_16bit(clahe_pro, color = 'blue', max_intensity = 65535, min_intenisty = 0, brightness = 100, contrast = 3, gamma = 1)
+
+
+jg.display_preview(adj_image)
+
+
+resized = jg.resize_projection(adj_image, metadata = None, height = None, width = None, resize_factor = 2)
+
+
+jg.display_preview(resized)
+
+
+jg.save_image(image = resized, path_to_save = 'resized.png')
+
+
+loaded_image = load_image(path = 'resized.png')
+
+
+
+# merging images 
+
+projection_ch1 = jg.load_image(path = 'projection_ch1.png')
+
+projection_ch2 = jg.load_image(path = 'projection_ch2.png')
+
+
+merged_image = jg.merge_images(image_list = [projection_ch1, projection_ch2], intensity_factors = [1,1])
+
+jg.display_preview(merged_image)
+
+
+jg.save_image(image = merged_image, path_to_save = 'merged_image.png')
+
+```
+
+<br />
+
+
+### Have fun JBS®

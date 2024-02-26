@@ -1,21 +1,22 @@
 from setuptools import setup, find_packages
 
-VERSION = '1.4.5' 
-DESCRIPTION = 'operetta_tool'
-LONG_DESCRIPTION = 'The Operetta_tool is a python library created for handling and annotation images from the Opera Phenix platform used for ML / AI applications. Instructions for use on github [https://github.com/jkubis96/Operetta_tool] '
+VERSION = '2.0.6' 
+DESCRIPTION = 'JIMG'
+LONG_DESCRIPTION = 'This library was created for handling high-resolution images from the Opera Phenix Plus High-Content Screening System, including operations such as concatenating raw series of images, z-projection, channel merging, image resizing, etc. Additionally, we have included options for annotating specific parts of images and selecting them for further analysis, for example, teaching ML/AI algorithms. Certain elements of this tool can be adapted for data analysis and annotation in other imaging systems. For more information, please feel free to contact us!'
+
 
 # Setting up
 setup(
-        name="Operetta_tool", 
+        name="JIMG", 
         version=VERSION,
         author="Jakub Kubis",
         author_email="jbiosystem@gmail.com",
         description=DESCRIPTION,
         long_description=LONG_DESCRIPTION,
-        packages=['operetta'],
+        packages=['JIMG'],
         include_package_data=True,
-        install_requires=['regex', 'pandas', 'numpy', 'more-itertools', 'opencv-python', 'matplotlib', 'Pillow', 'h5py', 'tqdm', 'tifffile', 'joblib', 'tk', 'scikit-image'],       
-        keywords=['python', 'opera', 'images', 'annotation', 'AI', 'cv', 'perkin'],
+        install_requires=['numpy', 'pandas', 'opencv-python', 'matplotlib', 'tifffile', 'joblib', 'Pillow'],       
+        keywords=['python', 'opera', 'pheonix' 'images', 'annotation', 'AI', 'cv', 'perkin', 'high-resolution'],
         license = 'MIT',
         classifiers = [
             "Development Status :: 3 - Alpha",
