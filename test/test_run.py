@@ -126,9 +126,6 @@ jg.save_image(image = merged_image, path_to_save = 'merged_image.png')
 
 
 
-split_channels(path_to_images = 'Images', path_to_save = '')
-
-
 
 
 

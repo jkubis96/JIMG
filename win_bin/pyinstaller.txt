@@ -1,0 +1,19 @@
+conda create py_app python=3.10
+
+conda activate py_app
+
+pip install pyinstaller
+
+
+pip install numpy
+pip install pandas
+pip install opencv-python
+pip install matplotlib
+pip install tqdm
+pip install tifffile
+pip install joblib
+pip install Pillow
+
+
+
+pyinstaller --noconfirm --onefile --windowed --icon "jbi_icon.ico" --add-data "jbi_icon.png;." --add-data "jbs_icon.png;."  --add-data "jbi_icon.ico;." "image_app.py"
