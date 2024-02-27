@@ -166,7 +166,7 @@ metadata_out = jimg.image_concatenate(path_to_images, path_to_save, image_queue,
 * path_to_images - path to directory including raw Opera images ['Images' directory]
 * path_to_save - path to directory in which the output *.tiff files will saved
 > * WARNING! In this function path_to_images / path_to_save should be full path\
->	The full path can be obtained using os.getcwd() + 'directory name' joined using os.path.join() eg. full_path = os.path.join(os.getcwd(), 'Images;)
+>	The full path can be obtained using os.getcwd() + 'directory name' joined using os.path.join() eg. full_path = os.path.join(os.getcwd(), 'Images')
 * n_proc - the number of processor threads or cores involved in the analysis adapted to the device on which the analysis will be performed. The more threads / cores, the faster the analysis
 * image_queue - a set of images in the correct order [from 'image_sequences' function]
 * img_length - number of pictures for images included in y-axis [from 'image_sequences' function]
