@@ -4,26 +4,27 @@ import numpy as np
 import re
 import pandas as pd
 import cv2
-import pandas as pd
 import itertools
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from PIL import Image as im
-import h5py
-from tqdm import tqdm
 import tifffile as tiff
 from joblib import Parallel, delayed
-import math
-import gc
 import warnings
 import tkinter as tk 
 from tkinter import ttk, Text
-from skimage import io, filters
 import pkg_resources
 from PIL import ImageFont, ImageDraw, Image
 import copy
+from skimage import io, filters
 
 
+
+def get_package_directory():
+    return pkg_resources.resource_filename("JIMG", "")
+
+
+
+_icon_source = os.path.join(get_package_directory(), 'icons', 'jbsicon.ico')
 
 
 warnings.filterwarnings("ignore", category=RuntimeWarning)
@@ -66,16 +67,25 @@ def resize_tiff(channels:list, metadata, prefix = 'resized' , height = None, wid
                             resized_image[n] = cv2.resize(image[n], (wh, height))
                             
                             
-                        res_metadata['X_resolution[m]'][0] = res_metadata['X_resolution[m]'][0]*height/h
-                        res_metadata['Y_resolution[m]'][0] = res_metadata['Y_resolution[m]'][0]*height/h
+                        res_metadata['X_resolution[um/px]'] = res_metadata['X_resolution[um/px]']*(height/h)
+                        res_metadata['Y_resolution[um/px]'] = res_metadata['Y_resolution[um/px]']*(height/h)
                         
                         
-                        tiff.imsave(str(prefix + '_' + path_to_tiff), resized_image,
+                        tiff.imwrite(str(prefix + '_' + path_to_tiff), resized_image,
                                         imagej=True,
-                                        resolution=(res_metadata['X_resolution[m]'][0]*1000000, res_metadata['Y_resolution[m]'][0]*1000000),
-                                        metadata={'spacing': res_metadata['z_spacing'], 'unit': 'um'}) 
+                                        resolution=(res_metadata['X_resolution[um/px]'], res_metadata['Y_resolution[um/px]']),
+                                        metadata={'spacing': res_metadata['z_spacing'], 
+                                                  'unit': 'um', 
+                                                  'axes' : 'ZYX', 
+                                                  'PhysicalSizeX': res_metadata['X_resolution[um/px]'],
+                                                  'PhysicalSizeXUnit': 'um',
+                                                  'PhysicalSizeY': res_metadata['Y_resolution[um/px]'],
+                                                  'PhysicalSizeYUnit': 'um',
+                                                  'Channel': ch,
+                                                  'magnification[x]': res_metadata['magnification[x]'][0]}) 
+                        
                             
-                        print('Resized succesfully')
+                        print('Resized successfully')
                         print('Current resolution is ' + str(resized_image.shape[2]) + 'x' + str(resized_image.shape[1]))
                         
                     elif width != None and height == None:
@@ -91,15 +101,23 @@ def resize_tiff(channels:list, metadata, prefix = 'resized' , height = None, wid
                             resized_image[n] = cv2.resize(image[n], (width, wh))
                             
                 
-                        res_metadata['X_resolution[m]'][0] = res_metadata['X_resolution[m]'][0]*width/w
-                        res_metadata['Y_resolution[m]'][0] = res_metadata['Y_resolution[m]'][0]*width/w
+                        res_metadata['X_resolution[um/px]'] = res_metadata['X_resolution[um/px]']*(width/w)
+                        res_metadata['Y_resolution[um/px]'] = res_metadata['Y_resolution[um/px]']*(width/w)
                         
-                        tiff.imsave(str(prefix + '_' + path_to_tiff), resized_image,
+                        tiff.imwrite(str(prefix + '_' + path_to_tiff), resized_image,
                                         imagej=True,
-                                        resolution=(res_metadata['X_resolution[m]'][0]*1000000, res_metadata['Y_resolution[m]'][0]*1000000),
-                                        metadata={'spacing': res_metadata['z_spacing'], 'unit': 'um'}) 
+                                        resolution=(res_metadata['X_resolution[um/px]'], res_metadata['Y_resolution[um/px]']),
+                                        metadata={'spacing': res_metadata['z_spacing'], 
+                                                  'unit': 'um', 
+                                                  'axes' : 'ZYX', 
+                                                  'PhysicalSizeX': res_metadata['X_resolution[um/px]'],
+                                                  'PhysicalSizeXUnit': 'um',
+                                                  'PhysicalSizeY': res_metadata['Y_resolution[um/px]'],
+                                                  'PhysicalSizeYUnit': 'um',
+                                                  'Channel': ch,
+                                                  'magnification[x]': res_metadata['magnification[x]']}) 
                         
-                        print('Resized succesfully')
+                        print('Resized successfully')
                         print('Current resolution is ' + str(resized_image.shape[2]) + 'x' + str(resized_image.shape[1]))
                         
                     elif width == None and height == None and resize_factor != None:
@@ -116,15 +134,24 @@ def resize_tiff(channels:list, metadata, prefix = 'resized' , height = None, wid
                             resized_image[n] = cv2.resize(image[n], (wh, hw))
                         
                 
-                        res_metadata['X_resolution[m]'][0] = res_metadata['X_resolution[m]'][0]/resize_factor
-                        res_metadata['Y_resolution[m]'][0] = res_metadata['Y_resolution[m]'][0]/resize_factor
+                        res_metadata['X_resolution[um/px]'] = res_metadata['X_resolution[um/px]']/resize_factor
+                        res_metadata['Y_resolution[um/px]'] = res_metadata['Y_resolution[um/px]']/resize_factor
                         
-                        tiff.imsave(str(prefix + '_' + path_to_tiff), resized_image,
+                        tiff.imwrite(str(prefix + '_' + path_to_tiff), resized_image,
                                         imagej=True,
-                                        resolution=(res_metadata['X_resolution[m]'][0]*1000000, res_metadata['Y_resolution[m]'][0]*1000000),
-                                        metadata={'spacing': res_metadata['z_spacing'], 'unit': 'um'}) 
+                                        resolution=(res_metadata['X_resolution[um/px]'], res_metadata['Y_resolution[um/px]']),
+                                        metadata={'spacing': res_metadata['z_spacing'], 
+                                                  'unit': 'um', 
+                                                  'axes' : 'ZYX', 
+                                                  'PhysicalSizeX': res_metadata['X_resolution[um/px]'],
+                                                  'PhysicalSizeXUnit': 'um',
+                                                  'PhysicalSizeY': res_metadata['Y_resolution[um/px]'],
+                                                  'PhysicalSizeYUnit': 'um',
+                                                  'Channel': ch,
+                                                  'magnification[x]': res_metadata['magnification[x]']}) 
+                        
                            
-                        print('Resized succesfully')
+                        print('Resized successfully')
                         print('Current resolution is ' + str(resized_image.shape[2]) + 'x' + str(resized_image.shape[1]))
                         
                     elif width != None and height != None:
@@ -146,11 +173,15 @@ def resize_tiff(channels:list, metadata, prefix = 'resized' , height = None, wid
             print("Something went wrong. Check the function input data and try again!")
             
      
+        
+     
 
      
 def resize_projection(image, metadata = None, height = None, width = None, resize_factor = None):
     
     try:
+        cmet = None
+        
         if height != None and  width == None:
             h = image.shape[0]
             w = image.shape[1]
@@ -160,10 +191,12 @@ def resize_projection(image, metadata = None, height = None, width = None, resiz
             
             image = cv2.resize(image, (wh, height))
             if metadata != None:
-                metadata['X_resolution[m]'][0] = metadata['X_resolution[m]'][0]*height/h
-                metadata['Y_resolution[m]'][0] = metadata['Y_resolution[m]'][0]*height/h
                 
-            print('Resized succesfully')
+                cmet = copy.deepcopy(metadata)
+                cmet['X_resolution[um/px]'] = cmet['X_resolution[um/px]']*(height/h)
+                cmet['Y_resolution[um/px]'] = cmet['Y_resolution[um/px]']*(height/h)
+                
+            print('Resized successfully')
             print('Current resolution is ' + str(image.shape[1]) + 'x' + str(image.shape[0]))
             
         elif width != None and height == None:
@@ -175,11 +208,13 @@ def resize_projection(image, metadata = None, height = None, width = None, resiz
             
             image = cv2.resize(image, (width, wh))
             if metadata != None:
-    
-                metadata['X_resolution[m]'][0] = metadata['X_resolution[m]'][0]*width/w
-                metadata['Y_resolution[m]'][0] = metadata['Y_resolution[m]'][0]*width/w
+                
+                cmet = copy.deepcopy(metadata)
+
+                cmet['X_resolution[um/px]'] = cmet['X_resolution[um/px]']*(width/w)
+                cmet['Y_resolution[um/px]'] = cmet['Y_resolution[um/px]']*(width/w)
             
-            print('Resized succesfully')
+            print('Resized successfully')
             print('Current resolution is ' + str(image.shape[1]) + 'x' + str(image.shape[0]))
             
         elif width == None and height == None and resize_factor != None:
@@ -191,11 +226,13 @@ def resize_projection(image, metadata = None, height = None, width = None, resiz
             
             image = cv2.resize(image, (wh, hw))
             if metadata != None:
+                
+                cmet = copy.deepcopy(metadata)
     
-                metadata['X_resolution[m]'][0] = metadata['X_resolution[m]'][0]/resize_factor
-                metadata['Y_resolution[m]'][0] = metadata['Y_resolution[m]'][0]/resize_factor
+                cmet['X_resolution[um/px]'] = cmet['X_resolution[um/px]']/resize_factor
+                cmet['Y_resolution[um/px]'] = cmet['Y_resolution[um/px]']/resize_factor
                
-            print('Resized succesfully')
+            print('Resized successfully')
             print('Current resolution is ' + str(image.shape[1]) + 'x' + str(image.shape[0]))
             
         elif width != None and height != None:
@@ -209,11 +246,12 @@ def resize_projection(image, metadata = None, height = None, width = None, resiz
                
         
     
-        return image, metadata
+        return image, cmet
     
     except:
         print("Something went wrong. Check the function input data and try again!")
         
+            
             
     
 def split_channels(path_to_images:str, path_to_save:str):
@@ -247,9 +285,11 @@ def split_channels(path_to_images:str, path_to_save:str):
                 
     except:
         print("Something went wrong. Check the function input data and try again!")
+   
     
+
     
-def xml_load(path_to_opera_xml:str):
+def xml_load(path_to_xml:str):
     
     try:
     
@@ -269,10 +309,7 @@ def xml_load(path_to_opera_xml:str):
         df = {'name':name, 'x':x, 'y':y}
         
         
-        with open(path_to_opera_xml) as topo_file:
-            for line in topo_file:
-               if line.startswith('    <Image Version="1">'):
-                   break
+        with open(path_to_xml) as topo_file:
             topo_file= topo_file.readlines()
             
             for line in topo_file:
@@ -301,26 +338,24 @@ def xml_load(path_to_opera_xml:str):
                 elif str('<ObjectiveMagnification Unit="">') in line and int(re.sub('</ObjectiveMagnification>','', re.sub('<ObjectiveMagnification Unit="">','',line)).replace(' ', '')) not in magnification:
                     magnification.append(int(re.sub('</ObjectiveMagnification>','', re.sub('<ObjectiveMagnification Unit="">','',line)).replace(' ', '')))
            
-            
-           
-                    
+
+
+        image_info = pd.DataFrame(df)
+        image_info['name'] = [re.sub('p.*', '', x) for x in image_info['name']]
         
-        df = pd.DataFrame(df)
-        df['name'] = [re.sub('p.*', '', x) for x in df['name']]
-        
-        df['y'] = df['y']*-1
+        image_info['y'] = image_info['y']*-1
         
         
-        df = df.drop_duplicates()
-        df['num'] = range(1,len(df['name'])+1)
+        image_info = image_info.drop_duplicates()
+        image_info['num'] = range(1,len(image_info['name'])+1)
         
-        df = df.reset_index(drop = True)
+        image_info = image_info.reset_index(drop = True)
         
     
-        metadata = {'channel_name':channel_name, 'channel_number':channel_num, 'X_resolution[m]': x_res, 'Y_resolution[m]': y_res, 'max_intensity[nm]':max_intensity, 'z_spacing':np.mean(z_spacing), 'excitation_wavelength[nm]':excitation_wavelength, 'emissio_wavelength[nm]':emissio_wavelength, 'magnification[x]':magnification}
+        metadata = {'channel_name':channel_name, 'channel_number':channel_num, 'X_resolution[um/px]': float(1./(x_res[0]*1000000)), 'Y_resolution[um/px]': float(1./(y_res[0]*1000000)), 'max_intensity[um]':max_intensity, 'z_spacing':np.mean(z_spacing), 'excitation_wavelength[nm]':excitation_wavelength, 'emissio_wavelength[nm]':emissio_wavelength, 'magnification[x]':magnification}
         
         
-        return df, metadata  
+        return image_info, metadata  
     
     except:
         print("Something went wrong. Check the function input data and try again!")
@@ -388,6 +423,8 @@ def detect_outlires(xml_file:pd.DataFrame, list_of_out:list = []):
     except:
         print("Something went wrong. Check the function input data and try again!")
     
+
+
 
 
 def repair_blanks(xml_file:pd.DataFrame):
@@ -502,6 +539,8 @@ def repair_blanks(xml_file:pd.DataFrame):
         print("Something went wrong. Check the function input data and try again!")
 
   
+
+
     
 def image_sequences(opera_coordinates:pd.DataFrame):
     
@@ -518,147 +557,149 @@ def image_sequences(opera_coordinates:pd.DataFrame):
             tmp = tmp.sort_values(by=['x'])
             queue_images = queue_images + list(tmp['name'])
     
-        image_dictinary=pd.DataFrame()
-        image_dictinary['queue']=queue_images
-        image_dictinary['image_num']=range(1,len(image_dictinary['queue'])+1)
+        image_dictionary=pd.DataFrame()
+        image_dictionary['queue']=queue_images
+        image_dictionary['image_num']=range(1,len(image_dictionary['queue'])+1)
         
         img_length = len(list(np.unique(opera_coordinates['y'])))
         img_width = len(list(np.unique(opera_coordinates['x'])))
         
-        return image_dictinary, img_length, img_width
+        return image_dictionary, img_length, img_width
     
     except:
         print("Something went wrong. Check the function input data and try again!")
 
 
 
-def image_concatenate(path_to_images:str, imgs:pd.DataFrame, metadata, img_length:int, img_width:int, overlap:int, channels:list, n_thread:int):
-     
+
+def image_concatenate(path_to_images:str, path_to_save:str, image_queue:pd.DataFrame, metadata, img_length:int, img_width:int, overlap:int, channels:list, resize:int = 2, n_proc:int = 4, par_type = 'processes'):
+  
+    init_path = os.getcwd()
+    
+    res_metadata = copy.deepcopy(metadata)
+ 
+    
     try:
-        
-        for obj in gc.get_objects():   
-            if isinstance(obj, h5py.File):  
-                try:
-                    obj.close()
-                except:
-                    pass 
-                
-                
-        if os.path.exists(os.path.join(path_to_images, 'images.h5')):
-            os.remove(os.path.join(path_to_images,'images.h5'))
+    
+        os.chdir(path_to_images)         
             
-        if os.path.exists(os.path.join(path_to_images,'images2.h5')):
-            os.remove(os.path.join(path_to_images,'images2.h5'))
         
-        def par_1(q, path_to_images, img_width, imgs, black_img, st, ch, overlap):
-            stop =  img_width * (q+1)
+        def par_1(q, img_width, image_queue, black_img, st, ch, overlap, resize):
+            stop = img_width * (q + 1)
             start = img_width * q
-            tmp = imgs['queue'][start:stop]
-            
+            tmp = image_queue['queue'][start:stop]
+    
             list_p = []
             for t in tmp:
                 if 'blank' in t:
                     list_p.append(str(t))
                 else:
-                    list_p.append(str([f for f in tmp_img if str(re.sub('\n','', str(t)) + 'p') in f and str('p'+st) in f][0]))
-                
+                    list_p.append(
+                        str([f for f in tmp_img if str(re.sub('\n', '', str(t)) + 'p') in f and str('p' + st) in f][0]))
+           
+            
             data = []
             for img in list_p:
-                if os.path.exists(os.path.join(path_to_images, img)):
-                    data.append(cv2.imread(os.path.join(path_to_images, img), cv2.IMREAD_ANYDEPTH))
+                if os.path.exists(img):
+                    data.append(cv2.imread(img, cv2.IMREAD_ANYDEPTH))
                 else:
                     data.append(black_img)
-                 
-    
     
             row, col = data[0].shape
-            for n,i in enumerate(data):
-                data[n] = data[n][:, int(col*overlap/2):-int(col*overlap/2)]
-                         
+            for n, i in enumerate(data):
+                if resize > 1:
+                    original_height, original_width = data[n].shape[:2]
     
+                    new_width = original_width // resize
+                    new_height = original_height // resize
+                    if overlap > 0:
+                        data[n] = cv2.resize(data[n][:, int(col * overlap / 2):-int(col * overlap / 2)], (new_width, new_height), interpolation=cv2.INTER_LINEAR)
+                    else:
+                        data[n] = cv2.resize(data[n], (new_width, new_height), interpolation=cv2.INTER_LINEAR)
+                    
+                else:
+                    if overlap > 0:
+                        data[n] = data[n][:, int(col * overlap / 2):-int(col * overlap / 2)]
     
+            data = np.concatenate(data, axis=1)
             
-            data = np.concatenate(data, axis = 1)
-            images_tmp.create_dataset('lane_' + str(q) + '-deep_' + str(st) + '-channel_' + str(ch),  data=data)
-            del data
+            
+            if overlap > 0:
+                row, col = data.shape  
+                data = data[int(row*overlap/2):-int(row*overlap/2), :]
+    
+            return data
         
         
         
-        images_list=os.listdir(path_to_images)
+        images_list=os.listdir(os.getcwd())
+        
+    
         deep = np.unique([re.sub('-.*','', re.sub('.*p', '', n)) for n in images_list if '.tiff' in n])
-        
-       
+               
         
         for ch in channels:
-            images_tmp2 = h5py.File(os.path.join(path_to_images, 'images2.h5'),   mode = 'a')
-        
+            
+            images_tmp = []
+         
             tmp_img = [i for i in images_list if ch in i]
             
-            black_img = cv2.imread(os.path.join(path_to_images, tmp_img[0]), cv2.IMREAD_ANYDEPTH)
+            black_img = cv2.imread(tmp_img[0], cv2.IMREAD_ANYDEPTH)
             black_img.fill(0) 
-            for st in tqdm(deep):
-                images_tmp = h5py.File(os.path.join(path_to_images, 'images.h5'),   mode = 'a')
-        
-               
-                Parallel(n_jobs=n_thread, prefer="threads")(delayed(par_1)(q, path_to_images, img_width, imgs, black_img, st, ch, overlap) for q in range(0,img_length))
-        
-               
-                    
-                data = []
-                for q in range(0,img_length):
-                    data.append(images_tmp[[f for f in images_tmp.keys() if 'lane_' + str(q) + '-deep' in f][0]][:])
-                  
-        
-                images_tmp.close()
-        
-                os.remove(os.path.join(path_to_images, 'images.h5'))
-                
-             
-                    
-                row, col = data[0].shape
-                for n,i in enumerate(data):
-                    data[n] = data[n][int(row*overlap/2):-int(row*overlap/2), :]
-                    
-         
-                    
             
-                   
-                 
+            for st in deep:
+                
+                data = Parallel(n_jobs=n_proc, prefer=par_type)(delayed(par_1)(q, img_width, image_queue, black_img, st, ch, overlap, resize) for q in range(0,img_length))
+               
                 data = np.concatenate(data, axis = 0)
                 
-                images_tmp2.create_dataset('deep_' + str(st) + '-channel_' + str(ch),  data=data)
-        
-            data = []
-            for q in tqdm(images_tmp2.keys()):
-    
-    
-    
-          
-                data.append(images_tmp2[q][:])
-                    
-    
-            data = np.stack(data)
-            
-        
-            tiff.imsave('channel_' + str(ch) + '.tiff', data,
-                           imagej=True,
-                           resolution=(metadata['X_resolution[m]'][0]*1000000, metadata['Y_resolution[m]'][0]*1000000),
-                           metadata={'spacing': metadata['z_spacing'], 'unit': 'um'}) 
+                images_tmp.append(data)
                 
-            images_tmp2.close()
+                del data
+        
+    
+        
+            data = np.stack(images_tmp)
+            
+            
+            res_metadata['X_resolution[um/px]'] = res_metadata['X_resolution[um/px]']/resize
+            res_metadata['Y_resolution[um/px]'] = res_metadata['Y_resolution[um/px]']/resize
+            
+            os.chdir(path_to_save)    
+            tiff.imwrite('channel_' + str(ch) + '.tiff', data,
+                           imagej=True,
+                           resolution=(res_metadata['X_resolution[um/px]'], res_metadata['Y_resolution[um/px]']),
+                           metadata={'spacing': res_metadata['z_spacing'], 
+                                     'unit': 'um', 
+                                     'axes' : 'ZYX', 
+                                     'PhysicalSizeX': res_metadata['X_resolution[um/px]'],
+                                     'PhysicalSizeXUnit': 'um',
+                                     'PhysicalSizeY': res_metadata['Y_resolution[um/px]'],
+                                     'PhysicalSizeYUnit': 'um',
+                                     'Channel': ch,
+                                     'magnification[x]': res_metadata['magnification[x]']}) 
+                
+            
             
             del data
             
-            os.remove(os.path.join(path_to_images, 'images2.h5'))
+            os.chdir(path_to_images)    
             
+            
+    
+        os.chdir(init_path)  
+        
+        return res_metadata
+    
     except:
+        os.chdir(init_path)   
         print("Something went wrong. Check the function input data and try again! \nCheck that the number of channels you want to assemble matches the number of data channels!")
 
 
 
 
 
-def z_projection(path_to_tiff:str, stack_check:str):
+def z_projection(path_to_tiff:str, stack_check:bool):
 
     if not os.path.exists(path_to_tiff):
         
@@ -703,16 +744,15 @@ def z_projection(path_to_tiff:str, stack_check:str):
        
         window = tk.Tk()
         
-        window.geometry("500x800")
+        window.geometry("500x715")
         window.title("Z-PROJECTION")
     
-        window.iconbitmap(pkg_resources.resource_filename("operetta", "jbsicon.ico"))
+        # window.iconbitmap(_icon_source)
        
         
         txt1 = tk.Label(window, text="Adjust parameters", anchor="w", justify="left")
         txt1.pack()
        
-        tk.Label(window, text="").pack()
         tk.Label(window, text="").pack()
         
         
@@ -733,7 +773,6 @@ def z_projection(path_to_tiff:str, stack_check:str):
         
         slider1.bind("<MouseWheel>", update_slider)
         
-        tk.Label(window, text="").pack()
         
         label2 = tk.Label(window, text="Gamma", anchor="w")
         label2.pack()
@@ -743,7 +782,6 @@ def z_projection(path_to_tiff:str, stack_check:str):
         slider2.set(10)
         slider2.pack()
         
-        tk.Label(window, text="").pack()
         
         label3 = tk.Label(window, text="Threshold", anchor="w")
         label3.pack()
@@ -764,7 +802,6 @@ def z_projection(path_to_tiff:str, stack_check:str):
         slider3_max.set(int(65535))
         slider3_max.pack()
         
-        tk.Label(window, text="").pack()
         
         label5 = tk.Label(window, text="Brightness", anchor="w")
         label5.pack()
@@ -783,8 +820,9 @@ def z_projection(path_to_tiff:str, stack_check:str):
         slider6.set(10)
         slider6.pack()
         
-        
         tk.Label(window, text="").pack()
+
+
         label4 = tk.Label(window, text="Color", anchor="w")
         label4.pack()
         
@@ -797,7 +835,6 @@ def z_projection(path_to_tiff:str, stack_check:str):
         combobox.pack()
         
         
-        tk.Label(window, text="").pack()
         
         label4 = tk.Label(window, text="Projection method", anchor="w")
         label4.pack()
@@ -1030,7 +1067,7 @@ def merge_images(image_list:list):
         window.geometry("500x600")
         window.title("MERGE CHANNELS")
     
-        window.iconbitmap(pkg_resources.resource_filename("operetta", "jbsicon.ico"))
+        # window.iconbitmap(_icon_source)
        
     
        
@@ -1137,6 +1174,7 @@ def merge_images(image_list:list):
 
 
 
+
 def image_grid(path_to_opera_projection:str, img_length:int, img_width:int):
 
     if not os.path.exists(path_to_opera_projection):
@@ -1222,7 +1260,7 @@ def image_grid(path_to_opera_projection:str, img_length:int, img_width:int):
         window.geometry("500x600")
         window.title("IMAGE SELECTION")
 
-        window.iconbitmap(pkg_resources.resource_filename("operetta", "jbsicon.ico"))
+        # window.iconbitmap(_icon_source)
         
         txt1 = tk.Label(window, text="Images selection", anchor="w", justify="left")
         txt1.pack()
@@ -1304,11 +1342,13 @@ def image_grid(path_to_opera_projection:str, img_length:int, img_width:int):
     
     
 
-def select_pictures(image_dictinary:pd.DataFrame, path_to_images:str, path_to_save:str, numbers_of_pictures:list, chennels:list):
+
+
+def select_pictures(image_dictionary:pd.DataFrame, path_to_images:str, path_to_save:str, numbers_of_pictures:list, chennels:list):
     
     try:
     
-        selected = image_dictinary[image_dictinary['image_num'].isin(numbers_of_pictures)]
+        selected = image_dictionary[image_dictionary['image_num'].isin(numbers_of_pictures)]
         selected = selected.reset_index()
         
         if not os.path.exists(path_to_save):
@@ -1331,6 +1371,8 @@ def select_pictures(image_dictinary:pd.DataFrame, path_to_images:str, path_to_sa
     except:
         print("Something went wrong. Check the function input data and try again!")  
             
+        
+        
             
 def add_scalebar(image, metadata):
 
@@ -1356,8 +1398,8 @@ def add_scalebar(image, metadata):
             nh = int(h*rw)
             
             image2 = cv2.resize(image2, (nw, nh))
-            metadata['X_resolution[m]'][0] = metadata['X_resolution[m]'][0]*rw
-            metadata['Y_resolution[m]'][0] = metadata['Y_resolution[m]'][0]*rw
+            metadata['X_resolution[um/px]'] = metadata['X_resolution[um/px]']*rw
+            metadata['Y_resolution[um/px]'] = metadata['Y_resolution[um/px]']*rw
             h = image2.shape[0]
             w = image2.shape[1]
     
@@ -1369,8 +1411,8 @@ def add_scalebar(image, metadata):
             nh = int(h*rh)
             
             image2 = cv2.resize(image2, (nw, nh))
-            metadata['X_resolution[m]'][0] = metadata['X_resolution[m]'][0]*rh
-            metadata['Y_resolution[m]'][0] = metadata['Y_resolution[m]'][0]*rh
+            metadata['X_resolution[um/px]'] = metadata['X_resolution[um/px]']*rh
+            metadata['Y_resolution[um/px]'] = metadata['Y_resolution[um/px]']*rh
             h = image2.shape[0]
             w = image2.shape[1]
            
@@ -1383,10 +1425,10 @@ def add_scalebar(image, metadata):
         
         window = tk.Tk()
         
-        window.geometry("500x800")
+        window.geometry("500x715")
         window.title("SCALE-BAR")
     
-        window.iconbitmap(pkg_resources.resource_filename("operetta", "jbsicon.ico"))
+        # window.iconbitmap(_icon_source)
        
         
         txt1 = tk.Label(window, text="Scale parameters", anchor="w", justify="left")
@@ -1519,7 +1561,7 @@ def add_scalebar(image, metadata):
                 
                
                 scale_length_um = int(length.get())  
-                pixels_per_um = met['X_resolution[m]'][0]*1000000   
+                pixels_per_um = met['X_resolution[um/px]']   
                 scale_length_px = int(scale_length_um * pixels_per_um)
  
                 # Calculate the position of the scale bar
