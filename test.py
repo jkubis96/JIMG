@@ -49,12 +49,16 @@ scale_im = jimg.add_scalebar(image = merged, metadata = res_metadata)
 
 
 
-path_to_opera_projection = 'projection_ch1_ver2.png'
+path_to_opera_projection = 'projection_ch1.png'
 
-list_of_images = jimg.image_grid(path_to_opera_projection, img_length, img_width)
+numbers_of_pictures = jimg.image_grid(path_to_opera_projection, img_length, img_width)
    
 
-jimg.select_pictures(image_dictinary, path_to_images, path_to_save, numbers_of_pictures, chennels)
+image_dictionary = image_queue
+path_to_images = 'Images'
+chennels = ['ch1']
+
+jimg.select_pictures(image_dictionary, path_to_images, path_to_save, numbers_of_pictures, chennels)
     
    
             
