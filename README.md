@@ -83,11 +83,10 @@ For more information, please feel free to contact us!
 
 
 
-
-
-
-
 <br />
+
+#### Previous version of code: [JIMG v.1.4.9](https://github.com/jkubis96/JIMG/tree/v.1.0.0)
+
 
 <br />
 
@@ -100,7 +99,7 @@ For more information, please feel free to contact us!
 
 CMD:
 ```
-pip install Operetta-tool
+pip install JIMG>=2.0.7
 ```
 
 
@@ -1808,6 +1807,8 @@ image_concatenate(path_to_images, path_to_save, image_queue, metadata, img_lengt
 
   > * path_to_images (str) - path to raw images
   > * path_to_save (str) - path to save concatenated the full image in *.tiff format
+  >> *WARNING! In this function path_to_images / path_to_save should be full path\
+  >>  The full path can be obtained using os.getcwd() + 'directory name' joined using os.path.join() eg. full_path = os.path.join(os.getcwd(), 'Images')
   > * image_queue (pd.DataFrame) - data frame with calculated raw images queue from image_sequences() function
   > * metadata (dict) - metadata for the microscope image obtained from xml_load() function
   > * img_length (int) - length (number of raw images) included in the full image core
@@ -1845,8 +1846,8 @@ image_queue, img_length, img_width = jg.image_sequences(image_info)
 n_cor = jg.get_number_of_cores()
 n_cor = n_cor - 2
 
-path_to_images = 'Images'
-path_to_save = ''
+path_to_images os.path.join(os.getcwd(), 'Images')
+path_to_save = os.getcwd()
 overlap = 0.05
 channels = ['ch1', 'ch2']
 
@@ -1868,8 +1869,8 @@ image_queue, img_length, img_width = jg.image_sequences(image_info)
 n_threads = jg.get_number_of_threads()
 n_threads = n_threads - 2
 
-path_to_images = 'Images'
-path_to_save = ''
+path_to_images os.path.join(os.getcwd(), 'Images')
+path_to_save = os.getcwd()
 overlap = 0.05
 channels = ['ch1', 'ch2']
 

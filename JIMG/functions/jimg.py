@@ -1011,6 +1011,11 @@ def image_concatenate(path_to_images:str, path_to_save:str, image_queue:pd.DataF
           
          path_to_images (str) - path to raw images
          path_to_save (str) - path to save concatenated the full image in *.tiff format
+         
+             * WARNING! In this function path_to_images / path_to_save should be full path
+               The full path can be obtained using os.getcwd() + 'directory name' joined 
+               using os.path.join() eg. full_path = os.path.join(os.getcwd(), 'Images')
+         
          image_queue (pd.DataFrame) - data frame with calculated raw images queue from image_sequences() function
          metadata (dict) - metadata for the microscope image obtained from xml_load() function
          img_length (int) - length (number of raw images) included in the full image core
