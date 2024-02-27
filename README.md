@@ -1,6 +1,6 @@
 # JIMG - python library
 
-##### New version 1.4.9 allow easier and more complex processing of images from Opera Phenix Plus High-Content Screening System.
+##### New version 1.4.9 allows easier and more complex processing of images from Opera Phenix Plus High-Content Screening System.
 
 <p align="right">
 <img  src="https://github.com/jkubis96/JIMG/blob/v.1.0.0/fig/logo_jbs.PNG?raw=true"drawing" width="250" />
