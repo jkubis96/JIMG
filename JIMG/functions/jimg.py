@@ -17,12 +17,12 @@ import copy
 
 
 
- #       _  ____   _         _____              _                      __ _____  __  
- #      | ||  _ \ (_)       / ____|            | |                    / /|  __ \ \ \ 
- #      | || |_) | _   ___ | (___   _   _  ___ | |_  ___  _ __ ___   | | | |__) | | |
- #  _   | ||  _ < | | / _ \ \___ \ | | | |/ __|| __|/ _ \| '_ ` _ \  | | |  _  /  | |
- # | |__| || |_) || || (_) |____) || |_| |\__ \| |_|  __/| | | | | | | | | | \ \  | |
- #  \____/ |____/ |_| \___/|_____/  \__, ||___/ \__|\___||_| |_| |_|  \_\|_|  \_\/_/
+ #       _  ____   _         _____              _                      
+ #      | ||  _ \ (_)       / ____|            | |                    
+ #      | || |_) | _   ___ | (___   _   _  ___ | |_  ___  _ __ ___   
+ #  _   | ||  _ < | | / _ \ \___ \ | | | |/ __|| __|/ _ \| '_ ` _ \  
+ # | |__| || |_) || || (_) |____) || |_| |\__ \| |_|  __/| | | | | | 
+ #  \____/ |____/ |_| \___/|_____/  \__, ||___/ \__|\___||_| |_| |_|  
  #                                   __/ |                                   
  #                                  |___/      
 
@@ -1349,7 +1349,7 @@ def equalizeHist_16bit(image_eq):
 
 
 
-def adjust_img_16bit(img, color = 'gray', max_intensity = 65535, min_intenisty = 0, brightness = 100, contrast = 1, gamma = 1):
+def adjust_img_16bit(img, color = 'gray', max_intensity:int = 65535, min_intenisty:int = 0, brightness:int = 1000, contrast = 1.0, gamma = 1.0):
 
     """
       This function allows manually adjusting image parameters and returns the adjusted image.
@@ -1360,7 +1360,7 @@ def adjust_img_16bit(img, color = 'gray', max_intensity = 65535, min_intenisty =
          color (str) - color of the image (RGB) ['green', 'blue', 'red', 'yellow', 'magenta', 'cyan']
          max_intensity (int) - upper threshold for pixel value. The pixel that exceeds this value will change to the set value
          min_intenisty (int) - lower threshold for pixel value. The pixel that is down to this value will change to 0
-         brightness (int) - value for image brightness [0-200]. Default: 100 (base value)
+         brightness (int) - value for image brightness [900-2000]. Default: 1000 (base value)
          contrast (float | int) - value for image contrast [0-5]. Default: 1 (base value)
          gamma (float | int) - value for image brightness [0-5]. Default: 1 (base value)
 
@@ -1373,11 +1373,51 @@ def adjust_img_16bit(img, color = 'gray', max_intensity = 65535, min_intenisty =
     try:
     
         img = img.copy()
-        
+
         img = img.astype(np.uint64)  
         
         img = np.clip(img, 0, 65535)
-    
+        
+        
+        #brightness
+        if brightness != 1000:
+            factor = -1000 + brightness
+            side = factor/abs(factor)
+            img[img > 0] = img[img > 0] + ((img[img > 0]*abs(factor)/100)*side)
+            img = np.clip(img, 0, 65535)
+
+        
+       
+        #contrast
+        if contrast != 1:
+            img = ((img - np.mean(img)) * contrast) + np.mean(img)
+            img = np.clip(img, 0, 65535)
+            
+            
+        #gamma
+        if gamma != 1:
+        
+            max_val = np.max(img)
+            
+            image_array = img.copy()/max_val
+            
+            image_array = np.clip(image_array , 0, 1)
+           
+            corrected_array = image_array ** (1/gamma)
+            
+            img = corrected_array*max_val
+           
+            del image_array, corrected_array
+            
+            img = np.clip(img, 0, 65535)
+
+            
+
+        
+            
+        img = ((img/np.max(img))*65535).astype(np.uint16)  
+        
+        
         
         # max intenisty
         if max_intensity != 65535:
@@ -1387,53 +1427,11 @@ def adjust_img_16bit(img, color = 'gray', max_intensity = 65535, min_intenisty =
         # min intenisty
         if min_intenisty != 0:
             img[img <= min_intenisty] = 0
-        
-        
-        
-        #brightness
-        
-        if brightness != 100:
-            img[img > 0] = img[img > 0] + int(brightness*100 - 10000)
-            img = np.clip(img, 0, 65535)
-    
-        
-        
-        
-        #contrast
-        
-        if contrast != 1:
-            img = ((img - np.mean(img)) * contrast) + np.mean(img)
-            img = np.clip(img, 0, 65535)
-    
-    
-        
-        
-        
-        #gamma
-        
-        if gamma != 1:
-        
-            image_array = img.copy()/65535
-            
-            image_array = np.clip(image_array , 0, 1)
-           
-            corrected_array = image_array ** (1/gamma)
-           
-            corrected_array = np.clip(corrected_array, 0, 1)
-            
-            img = corrected_array*65535
-           
-            del image_array, corrected_array
-    
-            img = img*65535
-            
-            img = img.astype(np.uint16)
-        
-        
-        
+
+
         img_gamma = np.zeros((img.shape[0], img.shape[1], 3), dtype=np.uint16)
-    
-    
+
+
         if color == 'green':
             img_gamma[:,:,1] = img
         
@@ -1628,6 +1626,91 @@ def read_tiff_meta(file_path):
 
 
 
+def rotate_image(img, rotate:int):
+    
+    """
+      This function allows for angular rotation of the image.
+     
+      Args:
+         
+         img (np.ndarray) - image for rotation
+         rotate (int) - degree of rotation [avaiable: 90, 180, 270]
+
+    
+      Returns:
+          
+          Rotated image (np.ndarray)
+         
+    """
+    
+    try:
+        
+        if rotate == 0:
+            r = 0
+        elif rotate == 90:
+            r = -1
+        elif rotate == 180:
+            r = 2
+        elif rotate == 180:
+            r = 2
+        elif rotate == 270:
+            r = 1
+        else:
+            print("Wrong argument - rotate!")
+            return None
+
+        
+        img = img.copy()
+        
+        img = np.rot90(img.copy(), k=r)
+    
+        return img
+    
+    except:
+        print("Something went wrong. Check the function input data and try again!")
+
+
+
+
+def mirror_image(img, rotate:str):
+    
+    """
+      This function allows for mirroring of the image.
+
+      Args:
+          img (np.ndarray) - image for mirroring
+          rotate (str) - type of mirroring to apply
+          
+          Available options are:
+             'h'  - horizontal mirroring
+             'v'  - vertical mirroring
+             'hv' - both horizontal and vertical mirroring
+    
+      Returns:
+          
+          Mirrored image (np.ndarray)
+         
+    """
+    
+    try:
+        
+        if rotate == 'h':
+            img = np.fliplr(img.copy())
+        elif rotate == 'v':
+            img = np.flipud(img.copy())
+        elif rotate == 'hv':
+            img = np.flipud(np.fliplr(img.copy()))
+        else:
+            print("Wrong argument - rotate!")
+            return None
+
+        return img
+    
+    except:
+        print("Something went wrong. Check the function input data and try again!")
+
+
+
 
 def display_preview(image):
     
@@ -1666,12 +1749,12 @@ def display_preview(image):
 ############################### Main code / ####################################
 
 
- #       _  ____   _         _____              _                      __ _____  __  
- #      | ||  _ \ (_)       / ____|            | |                    / /|  __ \ \ \ 
- #      | || |_) | _   ___ | (___   _   _  ___ | |_  ___  _ __ ___   | | | |__) | | |
- #  _   | ||  _ < | | / _ \ \___ \ | | | |/ __|| __|/ _ \| '_ ` _ \  | | |  _  /  | |
- # | |__| || |_) || || (_) |____) || |_| |\__ \| |_|  __/| | | | | | | | | | \ \  | |
- #  \____/ |____/ |_| \___/|_____/  \__, ||___/ \__|\___||_| |_| |_|  \_\|_|  \_\/_/
+ #       _  ____   _         _____              _                        
+ #      | ||  _ \ (_)       / ____|            | |                    
+ #      | || |_) | _   ___ | (___   _   _  ___ | |_  ___  _ __ ___   
+ #  _   | ||  _ < | | / _ \ \___ \ | | | |/ __|| __|/ _ \| '_ ` _ \  
+ # | |__| || |_) || || (_) |____) || |_| |\__ \| |_|  __/| | | | | | 
+ #  \____/ |____/ |_| \___/|_____/  \__, ||___/ \__|\___||_| |_| |_|  
  #                                   __/ |                                   
  #                                  |___/      
 

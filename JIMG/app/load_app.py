@@ -11,25 +11,25 @@ import tifffile as tiff
 from joblib import Parallel, delayed
 import warnings
 import tkinter as tk 
-from tkinter import ttk, Text, filedialog
+from tkinter import ttk, Text, filedialog, PhotoImage
 from PIL import ImageFont, ImageDraw, Image, ImageTk
 import copy
 import webbrowser
 import pickle
 import pkg_resources
+import platform
+import threading
 
 
 
 
 
-
-
- #       _  ____   _         _____              _                      __ _____  __  
- #      | ||  _ \ (_)       / ____|            | |                    / /|  __ \ \ \ 
- #      | || |_) | _   ___ | (___   _   _  ___ | |_  ___  _ __ ___   | | | |__) | | |
- #  _   | ||  _ < | | / _ \ \___ \ | | | |/ __|| __|/ _ \| '_ ` _ \  | | |  _  /  | |
- # | |__| || |_) || || (_) |____) || |_| |\__ \| |_|  __/| | | | | | | | | | \ \  | |
- #  \____/ |____/ |_| \___/|_____/  \__, ||___/ \__|\___||_| |_| |_|  \_\|_|  \_\/_/
+ #       _  ____   _         _____              _                      
+ #      | ||  _ \ (_)       / ____|            | |
+ #      | || |_) | _   ___ | (___   _   _  ___ | |_  ___  _ __ ___
+ #  _   | ||  _ < | | / _ \ \___ \ | | | |/ __|| __|/ _ \| '_ ` _ \  
+ # | |__| || |_) || || (_) |____) || |_| |\__ \| |_|  __/| | | | | | 
+ #  \____/ |____/ |_| \___/|_____/  \__, ||___/ \__|\___||_| |_| |_|  
  #                                   __/ |                                   
  #                                  |___/      
 
@@ -1080,6 +1080,25 @@ def z_projection(tiff_object, projection_type = 'avg'):
     return img
 
 
+def mirror_function(img, rotate:str):
+    
+    if rotate == 'h':
+        img = np.fliplr(img.copy())
+    elif rotate == 'v':
+        img = np.flipud(img.copy())
+    elif rotate == 'hv':
+        img = np.flipud(np.fliplr(img.copy()))
+        
+    return img
+
+
+def rotate_function(img, rotate:int):
+    
+    img = img.copy()
+    
+    img = np.rot90(img.copy(), k=rotate)
+
+    return img
 
 
 
@@ -1145,14 +1164,55 @@ def equalizeHist_16bit(image_eq):
 
 
 
-def adjust_img_16bit(img, color = 'gray', max_intensity = 65535, min_intenisty = 0, brightness = 100, contrast = 1, gamma = 1):
+def adjust_img_16bit(img, color = 'gray', max_intensity = 65535, min_intenisty = 0, brightness = 1000, contrast = 1, gamma = 1):
 
-    img = img.copy()
     
+    img = img.copy()
+
     img = img.astype(np.uint64)  
     
     img = np.clip(img, 0, 65535)
+    
+    
+    #brightness
+    if brightness != 1000:
+        factor = -1000 + brightness
+        side = factor/abs(factor)
+        img[img > 0] = img[img > 0] + ((img[img > 0]*abs(factor)/100)*side)
+        img = np.clip(img, 0, 65535)
 
+    
+   
+    #contrast
+    if contrast != 1:
+        img = ((img - np.mean(img)) * contrast) + np.mean(img)
+        img = np.clip(img, 0, 65535)
+        
+        
+    #gamma
+    if gamma != 1:
+    
+        max_val = np.max(img)
+        
+        image_array = img.copy()/max_val
+        
+        image_array = np.clip(image_array , 0, 1)
+       
+        corrected_array = image_array ** (1/gamma)
+        
+        img = corrected_array*max_val
+       
+        del image_array, corrected_array
+        
+        img = np.clip(img, 0, 65535)
+
+        
+
+    
+        
+    img = ((img/np.max(img))*65535).astype(np.uint16)  
+    
+    
     
     # max intenisty
     if max_intensity != 65535:
@@ -1162,50 +1222,8 @@ def adjust_img_16bit(img, color = 'gray', max_intensity = 65535, min_intenisty =
     # min intenisty
     if min_intenisty != 0:
         img[img <= min_intenisty] = 0
-    
-    
-    
-    #brightness
-    
-    if brightness != 100:
-        img[img > 0] = img[img > 0] + int(brightness*100 - 10000)
-        img = np.clip(img, 0, 65535)
-
-    
-    
-    
-    #contrast
-    
-    if contrast != 1:
-        img = ((img - np.mean(img)) * contrast) + np.mean(img)
-        img = np.clip(img, 0, 65535)
 
 
-    
-    
-    
-    #gamma
-    
-    if gamma != 1:
-    
-        image_array = img.copy()/65535
-        
-        image_array = np.clip(image_array , 0, 1)
-       
-        corrected_array = image_array ** (1/gamma)
-       
-        corrected_array = np.clip(corrected_array, 0, 1)
-        
-        img = corrected_array*65535
-       
-        del image_array, corrected_array
-
-        img = img*65535
-        
-        img = img.astype(np.uint16)
-    
-    
-    
     img_gamma = np.zeros((img.shape[0], img.shape[1], 3), dtype=np.uint16)
 
 
@@ -1700,27 +1718,40 @@ def tiff_reduce_app(path_to_tiff, parent_window = None):
             image_list_red = t.get("1.0", tk.END)
             image_list_red = re.sub(r"\s+", "", image_list_red)
             image_list_red = re.sub(r"\.", ",", image_list_red)
+            image_list_red = re.sub(r"\n+", "", image_list_red)
             image_list_red = image_list_red.split(',')
             image_list_red = [item for item in image_list_red if item != ""]
             image_list_red = [(int(x) - 1) for x in image_list_red]
             image_list_red = list(set(image_list_red))
             
-            if len(image_list_red) > 0:
-                tiff_file_red_return = tiff_file_red_return[[x for x in range(tiff_file_red_return.shape[0]) if x not in image_list_red]]
+            
+            if all(elem in list(range(tiff_file_red_return.shape[0])) for elem in image_list_red):
+                if len(image_list_red) > 0:
+                    tiff_file_red_return = tiff_file_red_return[[x for x in range(tiff_file_red_return.shape[0]) if x not in image_list_red]]
+                    
                 
-            
-            if app_metadata.removal_list == None:
-                app_metadata.add_rm_list(image_list_red)
-            else:
-                image_list_red = list(set(app_metadata.removal_list + image_list_red))
-                app_metadata.add_rm_list(image_list_red)
-
-                
-            
-            
-            cv2.destroyAllWindows()
+                if app_metadata.removal_list == None:
+                    app_metadata.add_rm_list(image_list_red)
+                else:
+                    image_list_red = list(set(app_metadata.removal_list + image_list_red))
+                    app_metadata.add_rm_list(image_list_red)
     
-            window.destroy()
+                    
+                
+                
+                cv2.destroyAllWindows()
+        
+                window.destroy()
+            
+            else:
+                
+                error_text = (
+                    "The provided image numbers is not\n"
+                    "included in the images list.\n"
+                    "Please check the entered numbers!"
+                )
+                
+                error_win(error_text, parent_window = None)
             
         
         # basic show
@@ -1731,11 +1762,28 @@ def tiff_reduce_app(path_to_tiff, parent_window = None):
             window = tk.Toplevel(parent_window)
         
         
+        def validate_input(event):
+            content = event.widget.get("1.0", tk.END).strip()
+            
+            if all(char.isdigit() or char in {',', ' ', '\n'} for char in content):
+                return True
+            else:
+                event.widget.delete("end-2c", "end-1c")
+                return False
+            
         
         window.geometry("500x600")
         window.title("Z-selection")
     
-        window.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+        system = platform.system()
+
+        if system == "Windows":
+            icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+            try:
+                window.iconbitmap(icon_path)
+            except Exception as e:
+                print(f"Error setting Windows icon: {e}")
+       
         
         txt1 = tk.Label(window, text="Slice selection", anchor="w", justify="left")
         txt1.pack()
@@ -1774,6 +1822,7 @@ def tiff_reduce_app(path_to_tiff, parent_window = None):
         tk.Label(window, text="").pack()
         
         t = Text(window, height=8, width=50)
+        t.bind("<KeyRelease>", validate_input)
         t.pack()
         
         display_image()
@@ -1951,7 +2000,15 @@ def z_projection_app(path_to_tiff:str, reduced_tiff, rm_tiff, parent_window = No
     window_projection.geometry("500x710")
     window_projection.title("Z-projection")
 
-    window_projection.iconbitmap(os.path.join(_icon_source, 'jbi_icon.ico'))
+    system = platform.system()
+
+    if system == "Windows":
+        icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+        try:
+            window_projection.iconbitmap(icon_path)
+        except Exception as e:
+            print(f"Error setting Windows icon: {e}")
+   
     
     
     tk.Label(window_projection, text="Window size", anchor="w").pack()
@@ -1998,8 +2055,8 @@ def z_projection_app(path_to_tiff:str, reduced_tiff, rm_tiff, parent_window = No
 
     
     brightness = tk.DoubleVar()
-    slider5 = tk.Scale(window_projection, from_=0, to=200, orient=tk.HORIZONTAL, length=400, variable=brightness)
-    slider5.set(100)
+    slider5 = tk.Scale(window_projection, from_=900, to=2000, orient=tk.HORIZONTAL, length=400, variable=brightness)
+    slider5.set(1000)
     slider5.pack()
     
     
@@ -2172,7 +2229,15 @@ def merge_images_app(image_list:list):
     window_merge.geometry("500x510")
     window_merge.title("Merge channels")
 
-    window_merge.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+    
+    system = platform.system()
+
+    if system == "Windows":
+        icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+        try:
+            window_merge.iconbitmap(icon_path)
+        except Exception as e:
+            print(f"Error setting Windows icon: {e}")
    
 
    
@@ -2280,6 +2345,28 @@ def merge_images_app(image_list:list):
 
 
 def image_selection_app(input_image, img_length:int, img_width:int):
+    
+    
+    global check_name
+    
+    if '_rotated_' in check_name:
+        error_text = ('\nYou try use rotated image!\n'
+                      'The queue of raw images may be different!\n'
+                      'If you want to use rotated image be sure\n'
+                      'that the image was transformed again to\n'
+                      'the primary image position!')
+        
+        error_win(error_text, parent_window = None,  color= 'yellow', win_name= 'Warning')
+        
+        
+    elif '_loaded' in check_name:
+        error_text = ('\nYou try use loaded image!\n'
+                      'The queue of raw images may be different!\n'
+                      'If you want to use loaded image be sure\n'
+                      'that the image is original image\n'
+                      )
+        
+        error_win(error_text, parent_window = None,  color= 'yellow', win_name= 'Warning')
 
     
         
@@ -2384,13 +2471,30 @@ def image_selection_app(input_image, img_length:int, img_width:int):
         window_selection.destroy()
     
 
-    
+    def validate_input(event):
+        content = event.widget.get("1.0", tk.END).strip()
+        
+        if all(char.isdigit() or char in {',', ' ', '\n'} for char in content):
+            return True
+        else:
+            event.widget.delete("end-2c", "end-1c")
+            return False
+        
+        
     window_selection = tk.Tk()
     
     window_selection.geometry("500x625")
     window_selection.title("Image selection")
 
-    window_selection.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+    system = platform.system()
+
+    if system == "Windows":
+        icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+        try:
+            window_selection.iconbitmap(icon_path)
+        except Exception as e:
+            print(f"Error setting Windows icon: {e}")
+   
     
     txt1 = tk.Label(window_selection, text="Images selection", anchor="w", justify="left")
     txt1.pack()
@@ -2445,8 +2549,10 @@ def image_selection_app(input_image, img_length:int, img_width:int):
     tk.Label(window_selection, text="").pack()
     
     t = Text(window_selection, height=10, width=50)
+    t.bind("<KeyRelease>", validate_input)
     t.pack()
-       
+    
+        
     
     
     tk.Label(window_selection, text="").pack()
@@ -2743,10 +2849,16 @@ def add_scalebar(image, px_to_um, parent_window = None):
     window_bar.geometry("500x725")
     window_bar.title("Scale-bar")
 
-    window_bar.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+
+    system = platform.system()
+
+    if system == "Windows":
+        icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+        try:
+            window_bar.iconbitmap(icon_path)
+        except Exception as e:
+            print(f"Error setting Windows icon: {e}")
    
-    
-    
     
     
     label1 = tk.Label(window_bar, text="Window size", anchor="w")
@@ -3141,7 +3253,16 @@ def draw_annotation(input_image, main_window = None):
     window_annotation.geometry("500x510")
     window_annotation.title("Annotation image")
 
-    window_annotation.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+    system = platform.system()
+
+    if system == "Windows":
+        icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+        try:
+            window_annotation.iconbitmap(icon_path)
+        except Exception as e:
+            print(f"Error setting Windows icon: {e}")
+   
+
     
     txt1 = tk.Label(window_annotation, text="Images selection", anchor="w", justify="left")
     txt1.pack()
@@ -3313,7 +3434,7 @@ def tiff_annotation(path_to_images:str, image_list:list, image_dictinary, metada
     cluth_bool = False
     contrast_type = 1
     his_bool = False
-    brightness_type = 100
+    brightness_type = 1000
     threshold_max_type = 2**16 - 1
     threshold_min_type = 0
     gamma_type = 1
@@ -3611,7 +3732,7 @@ def tiff_annotation(path_to_images:str, image_list:list, image_dictinary, metada
             slider2.set(1)
             slider3_min.set(0)
             slider3_max.set(int(65535))
-            slider5.set(100)
+            slider5.set(1000)
             slider6.set(1)
             c_var.set(False)
             h_var.set(False)
@@ -3659,7 +3780,15 @@ def tiff_annotation(path_to_images:str, image_list:list, image_dictinary, metada
         window_projection_tiff.geometry("500x625")
         window_projection_tiff.title("Annotation projection")
         
-        window_projection_tiff.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+
+        system = platform.system()
+
+        if system == "Windows":
+            icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+            try:
+                window_projection_tiff.iconbitmap(icon_path)
+            except Exception as e:
+                print(f"Error setting Windows icon: {e}")
         
         
        
@@ -3695,8 +3824,8 @@ def tiff_annotation(path_to_images:str, image_list:list, image_dictinary, metada
         
         
         brightness = tk.DoubleVar()
-        slider5 = tk.Scale(window_projection_tiff, from_=0, to=200, orient=tk.HORIZONTAL, length=400, variable=brightness)
-        slider5.set(100)
+        slider5 = tk.Scale(window_projection_tiff, from_=900, to=2000, orient=tk.HORIZONTAL, length=400, variable=brightness)
+        slider5.set(1000)
         slider5.pack()
                 
         
@@ -3793,7 +3922,16 @@ def tiff_annotation(path_to_images:str, image_list:list, image_dictinary, metada
         annotation_window.geometry("500x670")
         annotation_window.title("Annotation")
         
-        annotation_window.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+
+        system = platform.system()
+
+        if system == "Windows":
+            icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+            try:
+                annotation_window.iconbitmap(icon_path)
+            except Exception as e:
+                print(f"Error setting Windows icon: {e}")
+        
         
                 
         tk.Label(annotation_window, text="").pack()
@@ -3955,7 +4093,16 @@ def error_win(error_text, parent_window = None, color = 'tomato', win_name = 'Er
     
     error_win_.attributes("-topmost", True)
 
-    error_win_.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+    system = platform.system()
+
+    if system == "Windows":
+        icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+        try:
+            error_win_.iconbitmap(icon_path)
+        except Exception as e:
+            print(f"Error setting Windows icon: {e}")
+    
+        
 
     tk.Label(error_win_, text="", bg = color).pack()
     
@@ -4178,7 +4325,15 @@ def metadata_window():
                 reduction_win.geometry("500x625")
                 reduction_win.title("Cores reducing")
             
-                reduction_win.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+                system = platform.system()
+
+                if system == "Windows":
+                    icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+                    try:
+                        reduction_win.iconbitmap(icon_path)
+                    except Exception as e:
+                        print(f"Error setting Windows icon: {e}")
+              
                 
                 
                  
@@ -4290,8 +4445,16 @@ def metadata_window():
         
         meta_win.geometry("500x400")
         meta_win.title("Load metadata")
-    
-        meta_win.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+
+        system = platform.system()
+
+        if system == "Windows":
+            icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+            try:
+                meta_win.iconbitmap(icon_path)
+            except Exception as e:
+                print(f"Error setting Windows icon: {e}")
+       
     
         tk.Label(meta_win, text="").pack()
         
@@ -4430,23 +4593,28 @@ def concatenate_window():
         if dec == True and dec2 == True and app_metadata.tiffs_path != None and app_metadata.concat_path != None and len(channels) > 0:
             
             
-            progress_var.set(10) 
+            progress_var.set(10)
             progress_bar.update()
 
+            def run_concatenate():
+                dic, img_length, img_width = image_sequences(app_metadata.xml)
+                image_concatenate(
+                    str(app_metadata.tiffs_path), 
+                    str(app_metadata.concat_path), 
+                    dic, 
+                    app_metadata.metadata, 
+                    img_length, 
+                    img_width, 
+                    float(overlap), 
+                    channels, 
+                    resize, 
+                    int(n_proc), 
+                    str(multi.get())
+                )
+                con_win.after(0, lambda: progress_var.set(100))  
+                con_win.after(0, lambda: progress_bar.update())  
 
-            
-            dic, img_length, img_width = image_sequences(app_metadata.xml)
-            
-            ################################ <Diff> #####################################
-            
-            con_win.after(0,image_concatenate(str(app_metadata.tiffs_path), str(app_metadata.concat_path), dic, app_metadata.metadata, img_length, img_width, float(overlap), channels, resize, int(n_proc), str(multi.get())))
-
-            
-            ################################ <\Diff> #####################################
-
-
-            progress_var.set(100)  
-            progress_bar.update()
+            threading.Thread(target=run_concatenate).start()
         
         
         elif dec == False:
@@ -4479,7 +4647,15 @@ def concatenate_window():
     con_win.geometry("500x720")
     con_win.title("Concatenate images")
 
-    con_win.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+    system = platform.system()
+
+    if system == "Windows":
+        icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+        try:
+            con_win.iconbitmap(icon_path)
+        except Exception as e:
+            print(f"Error setting Windows icon: {e}")
+ 
 
     
     tk.Label(con_win, text="Path to the raw images folder:").pack()
@@ -4709,7 +4885,16 @@ def tiff_win_app():
         tiff_win.geometry("500x380")
         tiff_win.title("Tiff load")
     
-        tiff_win.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+        system = platform.system()
+
+        if system == "Windows":
+            icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+            try:
+                tiff_win.iconbitmap(icon_path)
+            except Exception as e:
+                print(f"Error setting Windows icon: {e}")
+      
+
     
         tk.Label(tiff_win, text="").pack()
         
@@ -4857,7 +5042,15 @@ def img_manager_win():
             sv_win.geometry("500x400")
             sv_win.title("Save image")
         
-            sv_win.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+            system = platform.system()
+
+            if system == "Windows":
+                icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+                try:
+                    sv_win.iconbitmap(icon_path)
+                except Exception as e:
+                    print(f"Error setting Windows icon: {e}")
+
             
             
             sv_win.transient(load_win)
@@ -5072,7 +5265,256 @@ def img_manager_win():
             
             error_text = ('\nThe file extension is not available to load!!!')
             error_win(error_text, parent_window = load_win)
+           
+            
+    def rotate_():
+          
+        if len(file_listbox.curselection()) > 0:
+            global load_win   
+            global app_metadata
+            
+            
+            
+            global metadata_to_rotate
+            metadata_to_rotate = app_metadata.images_dict['metadata'][app_metadata.images_dict['img_name'].index(file_listbox.get(file_listbox.curselection()[0]))]
+            
+            global image_to_rotate 
+            image_to_rotate = app_metadata.images_dict['img'][app_metadata.images_dict['img_name'].index(file_listbox.get(file_listbox.curselection()[0]))]
+            
+            global inimg
+            inimg = resize_to_screen_img(image_to_rotate.copy(), factor = 4)
+            
+            global name_to_rotate 
+            name_to_rotate = app_metadata.images_dict['img_name'][app_metadata.images_dict['img_name'].index(file_listbox.get(file_listbox.curselection()[0]))]
+            
+            
+           
+            def display_image_rot():
+                global load_win
+                global zoom_factor
+                global zp
+                global x
+                global y
+                global after_id
+                global inimg
                 
+
+                
+          
+                if isinstance(app_metadata.resize_tmp['image'], np.ndarray):
+                    resized_image = update_zoomed_region(app_metadata.resize_tmp['image'], size.get(), x, y)
+                else:
+                    resized_image = update_zoomed_region(inimg, size.get(), x, y)
+
+                cv2.imshow('Rotate image',resized_image) 
+                
+                    
+                
+                key = cv2.waitKey(100) & 0xFF
+                if key == ord('z'):
+                    cv2.setMouseCallback('Rotate image', zoom_in)
+                else:
+                    cv2.setMouseCallback('Rotate image', lambda *args: None)  
+
+
+                rotate_win.after(100, display_image_rot)
+            
+            
+            def save_():
+                global im_to_save
+                
+                if isinstance(app_metadata.resize_tmp['image'], np.ndarray):
+                    
+                    app_metadata.add_image(im_to_save, app_metadata.resize_tmp['name'], app_metadata.resize_tmp['metadata'])
+                    
+                    app_metadata.add_resize(None, None, None)
+                    
+                    global rotate_win
+                    
+                    cv2.destroyAllWindows()
+                    rotate_win.destroy()
+                    
+                    img_list()
+                    
+                    
+                
+                else:
+                    
+                    error_text = ('\nNothing selected to save!\n'
+                                  'Firstly resize some image!')
+                    
+                    error_win(error_text, parent_window = rotate_win)
+                    
+
+            
+            
+            def exit_win():
+                
+                cv2.destroyAllWindows()
+                rotate_win.destroy()
+                
+             
+           
+            def rotate_run():
+                global app_metadata
+                global metadata_to_rotate
+                global image_to_rotate 
+                global name_to_rotate 
+                global im_to_save
+                global inimg
+                
+                
+
+                if rotate_box.get() == "0°":
+                    r = 0
+                elif rotate_box.get() == "90°":
+                    r = -1
+                elif rotate_box.get() == "180°":
+                    r = 2
+                elif rotate_box.get() == "180°":
+                    r = 2
+                elif rotate_box.get() == "270°":
+                    r = 1
+                    
+
+                tmp_img = rotate_function(inimg, r)
+                im_to_save = rotate_function(image_to_rotate, r)
+
+              
+
+                if mirror_box.get() == "horizontal":
+                    tmp_img = mirror_function(tmp_img, 'h')
+                    im_to_save = mirror_function(im_to_save, 'h')
+
+                elif mirror_box.get() == "vertical":
+                    tmp_img = mirror_function(tmp_img, 'v')
+                    im_to_save = mirror_function(im_to_save, 'v')
+
+                elif mirror_box.get() == "horizontal/vertical":
+                    tmp_img = mirror_function(tmp_img, 'hv')
+                    im_to_save = mirror_function(im_to_save, 'hv')
+
+
+                
+
+                    
+                n = 0
+                while(True):
+                    n += 1
+                    tmp_img_name = name_to_resize + '_rotated_' + str(n)
+                    if tmp_img_name not in app_metadata.images_dict['img_name']:
+                        break
+               
+               
+                app_metadata.add_resize(tmp_img, metadata_to_rotate, tmp_img_name)
+                    
+      
+                        
+                       
+    
+            global rotate_win
+            
+            rotate_win = tk.Toplevel(load_win)
+            
+            # rotate_win = tk.Tk()
+
+        
+            rotate_win.geometry("500x500")
+            rotate_win.title("Rotate image")
+        
+            system = platform.system()
+
+            if system == "Windows":
+                icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+                try:
+                    rotate_win.iconbitmap(icon_path)
+                except Exception as e:
+                    print(f"Error setting Windows icon: {e}")
+     
+            
+            
+            tk.Label(rotate_win, text="", anchor="w").pack()
+            
+            
+            text = (
+                '    You can rotate or mirror your image.\n'
+                '    Please note that annotating the single images in their raw\n'
+                '    form will not be possible after rotating or mirroring.\n\n\n'
+                '    !The option Annotate raw for this image should be not use!\n'
+            )
+            
+        
+        
+            tk.Label(rotate_win, text=text, anchor="w", justify="center").pack()
+            
+            tk.Label(rotate_win, text="").pack()
+            
+            label1 = tk.Label(rotate_win, text="Rotate °:", anchor="w")
+            label1.pack()
+            
+           
+            rotate_type = ["0°", "90°", "180°", "270°"]
+
+            rotate_box = ttk.Combobox(rotate_win, values=rotate_type)
+            
+            rotate_box.current(0)
+            
+            rotate_box.pack()
+            
+            
+            tk.Label(rotate_win, text="").pack()
+            
+            label1 = tk.Label(rotate_win, text="Mirror type:", anchor="w")
+            label1.pack()
+            
+           
+            mirror_type = ["----------------------", "horizontal", "vertical", "horizontal/vertical"]
+
+            mirror_box = ttk.Combobox(rotate_win, values=mirror_type)
+            
+            mirror_box.current(0)
+            
+            mirror_box.pack()
+            
+            
+            
+
+            tk.Label(rotate_win, text="").pack()
+
+            
+            button4 = tk.Button(rotate_win, text="Rotate", command=rotate_run, width=20, height=2)
+            button4.pack()
+            
+            
+            tk.Label(rotate_win, text="").pack()
+
+            
+            button5 = tk.Button(rotate_win, text="Save", command=save_, width=20, height=2)
+            button5.pack()
+            
+            
+            tk.Label(rotate_win, text="").pack()
+
+            
+        
+            button6 = tk.Button(rotate_win, text="Back", command=exit_win, width=20, height=2)
+            button6.pack()
+            
+    
+            display_image_rot()
+            
+            rotate_win.mainloop()
+            
+            cv2.destroyAllWindows()
+
+            
+                 
+        else:
+            
+            error_text = ('\nLoad and / or select the image!!!')
+            error_win(error_text, parent_window = load_win)  
+            
+            
             
     def resize_():
           
@@ -5273,7 +5715,16 @@ def img_manager_win():
             resize_win.geometry("500x560")
             resize_win.title("Resize image")
         
-            resize_win.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+
+            system = platform.system()
+
+            if system == "Windows":
+                icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+                try:
+                    resize_win.iconbitmap(icon_path)
+                except Exception as e:
+                    print(f"Error setting Windows icon: {e}")
+
             
             
             tk.Label(resize_win, text="", anchor="w").pack()
@@ -5370,11 +5821,19 @@ def img_manager_win():
         load_win = tk.Tk()
         
     
-        load_win.geometry("650x690")
+        load_win.geometry("650x745")
         load_win.title("Images manager")
-    
-        load_win.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
         
+        system = platform.system()
+
+        if system == "Windows":
+            icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+            try:
+                load_win.iconbitmap(icon_path)
+            except Exception as e:
+                print(f"Error setting Windows icon: {e}")
+
+    
         
         tk.Label(load_win, text="", anchor="w").pack()
         
@@ -5420,6 +5879,13 @@ def img_manager_win():
         
         button4 = tk.Button(load_win, text="Resize", command=resize_, width=20, height=2)
         button4.pack()
+    
+        tk.Label(load_win, text="").pack()
+        
+        
+        
+        button4_1 = tk.Button(load_win, text="Rotate", command=rotate_, width=20, height=2)
+        button4_1.pack()
     
         tk.Label(load_win, text="").pack()
         
@@ -5598,7 +6064,14 @@ def img_merge_win():
             sv_win.geometry("500x400")
             sv_win.title("Save image")
         
-            sv_win.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+            system = platform.system()
+
+            if system == "Windows":
+                icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+                try:
+                    sv_win.iconbitmap(icon_path)
+                except Exception as e:
+                    print(f"Error setting Windows icon: {e}")
             
             
             sv_win.transient(merge_win)
@@ -5756,9 +6229,16 @@ def img_merge_win():
     
         merge_win.geometry("650x560")
         merge_win.title("Merge images")
-    
-        merge_win.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
-        
+
+        system = platform.system()
+
+        if system == "Windows":
+            icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+            try:
+                merge_win.iconbitmap(icon_path)
+            except Exception as e:
+                print(f"Error setting Windows icon: {e}")
+       
         
         tk.Label(merge_win, text="", anchor="w").pack()
         
@@ -5967,8 +6447,16 @@ def img_scale_win():
         
             sv_win.geometry("500x400")
             sv_win.title("Save image")
-        
-            sv_win.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+
+            system = platform.system()
+
+            if system == "Windows":
+                icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+                try:
+                    sv_win.iconbitmap(icon_path)
+                except Exception as e:
+                    print(f"Error setting Windows icon: {e}")
+           
             
             
             sv_win.transient(sc_win)
@@ -6124,8 +6612,16 @@ def img_scale_win():
     
         sc_win.geometry("650x560")
         sc_win.title("Add scale-bar")
-    
-        sc_win.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+
+        system = platform.system()
+
+        if system == "Windows":
+            icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+            try:
+                sc_win.iconbitmap(icon_path)
+            except Exception as e:
+                print(f"Error setting Windows icon: {e}")
+       
         
         
         tk.Label(sc_win, text="", anchor="w").pack()
@@ -6332,9 +6828,17 @@ def img_annotation_image():
             sv_win.geometry("500x400")
             sv_win.title("Save image")
         
-            sv_win.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
-            
-            
+            system = platform.system()
+
+            if system == "Windows":
+                icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+                try:
+                    sv_win.iconbitmap(icon_path)
+                except Exception as e:
+                    print(f"Error setting Windows icon: {e}")
+          
+                
+                
             sv_win.transient(an_win)
 
             sv_win.grab_set()
@@ -6488,8 +6992,16 @@ def img_annotation_image():
         an_win.geometry("650x560")
         an_win.title("Image annotation")
     
-        an_win.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
-        
+        system = platform.system()
+
+        if system == "Windows":
+            icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+            try:
+                an_win.iconbitmap(icon_path)
+            except Exception as e:
+                print(f"Error setting Windows icon: {e}")
+       
+    
         
         tk.Label(an_win, text="", anchor="w").pack()
         
@@ -6574,11 +7086,15 @@ def img_annotation_raw():
         
         if len(file_listbox.curselection()) > 0:
             global app_metadata
-          
+            global check_name
+            
+            check_name = app_metadata.images_dict['img_name'][app_metadata.images_dict['img_name'].index(file_listbox.get(file_listbox.curselection()[0]))]
             
             metadata = app_metadata.images_dict['metadata'][app_metadata.images_dict['img_name'].index(file_listbox.get(file_listbox.curselection()[0]))]
             image = app_metadata.images_dict['img'][app_metadata.images_dict['img_name'].index(file_listbox.get(file_listbox.curselection()[0]))]            
- 
+            
+           
+                
 
             if not isinstance(app_metadata.xml, pd.DataFrame):
                 
@@ -6825,7 +7341,17 @@ def img_annotation_raw():
             svr_win.geometry("500x400")
             svr_win.title("Save images")
         
-            svr_win.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+
+            system = platform.system()
+
+            if system == "Windows":
+                icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+                try:
+                    svr_win.iconbitmap(icon_path)
+                except Exception as e:
+                    print(f"Error setting Windows icon: {e}")
+           
+    
             
             
             svr_win.transient(anr_win)
@@ -6964,8 +7490,8 @@ def img_annotation_raw():
         cv2.destroyAllWindows()
         anr_win.destroy() 
         
-        
-
+    
+    
     def main_win():
         global file_listbox
         global anr_win
@@ -6978,7 +7504,16 @@ def img_annotation_raw():
         anr_win.geometry("650x560")
         anr_win.title("Annotate raw images")
     
-        anr_win.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+
+        system = platform.system()
+
+        if system == "Windows":
+            icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+            try:
+                anr_win.iconbitmap(icon_path)
+            except Exception as e:
+                print(f"Error setting Windows icon: {e}")
+      
         
         
         tk.Label(anr_win, text="", anchor="w").pack()
@@ -6996,6 +7531,7 @@ def img_annotation_raw():
         tk.Label(anr_win, text="").pack()
         
         tk.Label(anr_win, text="Images list").pack()
+        
         
         
         file_listbox = tk.Listbox(anr_win, selectmode=tk.SINGLE, width=90)
@@ -7100,9 +7636,17 @@ def project_manager_win():
     
         sp_win.geometry("500x250")
         sp_win.title("Save project")
-    
-        sp_win.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+
         
+        system = platform.system()
+
+        if system == "Windows":
+            icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+            try:
+                sp_win.iconbitmap(icon_path)
+            except Exception as e:
+                print(f"Error setting Windows icon: {e}")
+       
         
         sp_win.transient(pm_win)
 
@@ -7207,9 +7751,18 @@ def project_manager_win():
         lp_win.geometry("500x250")
         lp_win.title("Load project")
     
-        lp_win.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
         
+        system = platform.system()
+
+        if system == "Windows":
+            icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+            try:
+                lp_win.iconbitmap(icon_path)
+            except Exception as e:
+                print(f"Error setting Windows icon: {e}")
+      
         
+
         lp_win.transient(pm_win)
 
         lp_win.grab_set()
@@ -7272,7 +7825,16 @@ def project_manager_win():
         pm_win.geometry("350x270")
         pm_win.title("Project manager")
     
-        pm_win.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+
+        system = platform.system()
+
+        if system == "Windows":
+            icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+            try:
+                pm_win.iconbitmap(icon_path)
+            except Exception as e:
+                print(f"Error setting Windows icon: {e}")
+       
         
                 
         tk.Label(pm_win, text="", anchor="w").pack()
@@ -7430,7 +7992,17 @@ def run_app():
         app_run.geometry("350x660")
         app_run.title("Main menu")
     
-        app_run.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+
+        system = platform.system()
+
+        if system == "Windows":
+            icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+            try:
+                app_run.iconbitmap(icon_path)
+            except Exception as e:
+                print(f"Error setting Windows icon: {e}")
+       
+        
         
         tk.Label(app_run, text="").pack()
          
@@ -7532,7 +8104,16 @@ def jbs_main_win():
         
         license_w.title("License")
 
-        license_w.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+
+        system = platform.system()
+
+        if system == "Windows":
+            icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+            try:
+                license_w.iconbitmap(icon_path)
+            except Exception as e:
+                print(f"Error setting Windows icon: {e}")
+       
             
             
         lic = (
@@ -7574,7 +8155,16 @@ def jbs_main_win():
         
         conw.title("Contact")
 
-        conw.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+
+        system = platform.system()
+
+        if system == "Windows":
+            icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+            try:
+                conw.iconbitmap(icon_path)
+            except Exception as e:
+                print(f"Error setting Windows icon: {e}")
+       
             
             
         con = (
@@ -7582,7 +8172,7 @@ def jbs_main_win():
             '   Organization:\n'
             '   Institute of Bioorganic Chemistry\n'
             '   Polish Academy of Sciences\n'
-            '   Zygmunta Noskowskiego 12/14, 61-704 Poznań\n'
+            '   Zygmunta Noskowskiego 12/14, 61-704 Poznan\n'
             '   Poland\n\n\n'
 
 
@@ -7628,7 +8218,18 @@ def jbs_main_win():
         jbs_win.geometry("825x680")
         jbs_win.title("Image system")
     
-        jbs_win.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+
+        system = platform.system()
+
+        if system == "Windows":
+            icon_path = os.path.join(_icon_source, 'jbi_icon.ico')
+            try:
+                jbs_win.iconbitmap(icon_path)
+            except Exception as e:
+                print(f"Error setting Windows icon: {e}")
+        
+
+
     
         ico_path = os.path.join(_icon_source,'jbs_icon.png')
         img_pil = Image.open(ico_path).resize((150, 150))
@@ -7684,7 +8285,7 @@ def jbs_main_win():
         
         footer = (
             '\n\n'
-            'Institute of Bioorganic Chemistry PAS, Poznań, 2024'
+            'Institute of Bioorganic Chemistry PAS, Poznan, 2024'
             
         )
     
@@ -7711,12 +8312,12 @@ def run():
     The JIMG application starts.
     
     
-    #       _  ____   _         _____              _                      __ _____  __  
-    #      | ||  _ \ (_)       / ____|            | |                    / /|  __ \ \ \ 
-    #      | || |_) | _   ___ | (___   _   _  ___ | |_  ___  _ __ ___   | | | |__) | | |
-    #  _   | ||  _ < | | / _ \ \___ \ | | | |/ __|| __|/ _ \| '_ ` _ \  | | |  _  /  | |
-    # | |__| || |_) || || (_) |____) || |_| |\__ \| |_|  __/| | | | | | | | | | \ \  | |
-    #  \____/ |____/ |_| \___/|_____/  \__, ||___/ \__|\___||_| |_| |_|  \_\|_|  \_\/_/
+    #       _  ____   _         _____              _                       
+    #      | ||  _ \ (_)       / ____|            | |                     
+    #      | || |_) | _   ___ | (___   _   _  ___ | |_  ___  _ __ ___   
+    #  _   | ||  _ < | | / _ \ \___ \ | | | |/ __|| __|/ _ \| '_ ` _ \  
+    # | |__| || |_) || || (_) |____) || |_| |\__ \| |_|  __/| | | | | | 
+    #  \____/ |____/ |_| \___/|_____/  \__, ||___/ \__|\___||_| |_| |_|  
     #                                   __/ |                                   
     #                                  |___/      
 
@@ -7734,12 +8335,12 @@ def run():
 ############################### Main code / ####################################
 
 
- #       _  ____   _         _____              _                      __ _____  __  
- #      | ||  _ \ (_)       / ____|            | |                    / /|  __ \ \ \ 
- #      | || |_) | _   ___ | (___   _   _  ___ | |_  ___  _ __ ___   | | | |__) | | |
- #  _   | ||  _ < | | / _ \ \___ \ | | | |/ __|| __|/ _ \| '_ ` _ \  | | |  _  /  | |
- # | |__| || |_) || || (_) |____) || |_| |\__ \| |_|  __/| | | | | | | | | | \ \  | |
- #  \____/ |____/ |_| \___/|_____/  \__, ||___/ \__|\___||_| |_| |_|  \_\|_|  \_\/_/
+ #       _  ____   _         _____              _                      
+ #      | ||  _ \ (_)       / ____|            | |                    
+ #      | || |_) | _   ___ | (___   _   _  ___ | |_  ___  _ __ ___   
+ #  _   | ||  _ < | | / _ \ \___ \ | | | |/ __|| __|/ _ \| '_ ` _ \  
+ # | |__| || |_) || || (_) |____) || |_| |\__ \| |_|  __/| | | | | | 
+ #  \____/ |____/ |_| \___/|_____/  \__, ||___/ \__|\___||_| |_| |_|  
  #                                   __/ |                                   
  #                                  |___/      
 

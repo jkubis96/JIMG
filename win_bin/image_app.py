@@ -17,14 +17,16 @@ import copy
 import webbrowser
 import sys
 import pickle
+import threading
 
 
- #       _  ____   _         _____              _                      __ _____  __  
- #      | ||  _ \ (_)       / ____|            | |                    / /|  __ \ \ \ 
- #      | || |_) | _   ___ | (___   _   _  ___ | |_  ___  _ __ ___   | | | |__) | | |
- #  _   | ||  _ < | | / _ \ \___ \ | | | |/ __|| __|/ _ \| '_ ` _ \  | | |  _  /  | |
- # | |__| || |_) || || (_) |____) || |_| |\__ \| |_|  __/| | | | | | | | | | \ \  | |
- #  \____/ |____/ |_| \___/|_____/  \__, ||___/ \__|\___||_| |_| |_|  \_\|_|  \_\/_/
+
+ #       _  ____   _         _____              _                      
+ #      | ||  _ \ (_)       / ____|            | |                    
+ #      | || |_) | _   ___ | (___   _   _  ___ | |_  ___  _ __ ___   
+ #  _   | ||  _ < | | / _ \ \___ \ | | | |/ __|| __|/ _ \| '_ ` _ \  
+ # | |__| || |_) || || (_) |____) || |_| |\__ \| |_|  __/| | | | | | 
+ #  \____/ |____/ |_| \___/|_____/  \__, ||___/ \__|\___||_| |_| |_|  
  #                                   __/ |                                   
  #                                  |___/      
 
@@ -441,6 +443,29 @@ def split_channels(path_to_images:str, path_to_save:str):
     
     
     
+    
+def mirror_function(img, rotate:str):
+    
+    if rotate == 'h':
+        img = np.fliplr(img.copy())
+    elif rotate == 'v':
+        img = np.flipud(img.copy())
+    elif rotate == 'hv':
+        img = np.flipud(np.fliplr(img.copy()))
+        
+    return img
+
+
+
+def rotate_function(img, rotate:int):
+    
+    img = img.copy()
+    
+    img = np.rot90(img.copy(), k=rotate)
+
+    return img
+
+
     
 def xml_load(path_to_opera_xml:str):
     
@@ -1143,14 +1168,56 @@ def equalizeHist_16bit(image_eq):
 
 
 
-def adjust_img_16bit(img, color = 'gray', max_intensity = 65535, min_intenisty = 0, brightness = 100, contrast = 1, gamma = 1):
 
-    img = img.copy()
+def adjust_img_16bit(img, color = 'gray', max_intensity = 65535, min_intenisty = 0, brightness = 1000, contrast = 1, gamma = 1):
+
     
+    img = img.copy()
+
     img = img.astype(np.uint64)  
     
     img = np.clip(img, 0, 65535)
+    
+    
+    #brightness
+    if brightness != 1000:
+        factor = -1000 + brightness
+        side = factor/abs(factor)
+        img[img > 0] = img[img > 0] + ((img[img > 0]*abs(factor)/100)*side)
+        img = np.clip(img, 0, 65535)
 
+    
+   
+    #contrast
+    if contrast != 1:
+        img = ((img - np.mean(img)) * contrast) + np.mean(img)
+        img = np.clip(img, 0, 65535)
+        
+        
+    #gamma
+    if gamma != 1:
+    
+        max_val = np.max(img)
+        
+        image_array = img.copy()/max_val
+        
+        image_array = np.clip(image_array , 0, 1)
+       
+        corrected_array = image_array ** (1/gamma)
+        
+        img = corrected_array*max_val
+       
+        del image_array, corrected_array
+        
+        img = np.clip(img, 0, 65535)
+
+        
+
+    
+        
+    img = ((img/np.max(img))*65535).astype(np.uint16)  
+    
+    
     
     # max intenisty
     if max_intensity != 65535:
@@ -1160,50 +1227,8 @@ def adjust_img_16bit(img, color = 'gray', max_intensity = 65535, min_intenisty =
     # min intenisty
     if min_intenisty != 0:
         img[img <= min_intenisty] = 0
-    
-    
-    
-    #brightness
-    
-    if brightness != 100:
-        img[img > 0] = img[img > 0] + int(brightness*100 - 10000)
-        img = np.clip(img, 0, 65535)
-
-    
-    
-    
-    #contrast
-    
-    if contrast != 1:
-        img = ((img - np.mean(img)) * contrast) + np.mean(img)
-        img = np.clip(img, 0, 65535)
 
 
-    
-    
-    
-    #gamma
-    
-    if gamma != 1:
-    
-        image_array = img.copy()/65535
-        
-        image_array = np.clip(image_array , 0, 1)
-       
-        corrected_array = image_array ** (1/gamma)
-       
-        corrected_array = np.clip(corrected_array, 0, 1)
-        
-        img = corrected_array*65535
-       
-        del image_array, corrected_array
-
-        img = img*65535
-        
-        img = img.astype(np.uint16)
-    
-    
-    
     img_gamma = np.zeros((img.shape[0], img.shape[1], 3), dtype=np.uint16)
 
 
@@ -1240,7 +1265,6 @@ def adjust_img_16bit(img, color = 'gray', max_intensity = 65535, min_intenisty =
              
              
     return img_gamma
-            
 
 
 
@@ -1699,27 +1723,40 @@ def tiff_reduce_app(path_to_tiff, parent_window = None):
             image_list_red = t.get("1.0", tk.END)
             image_list_red = re.sub(r"\s+", "", image_list_red)
             image_list_red = re.sub(r"\.", ",", image_list_red)
+            image_list_red = re.sub(r"\n+", "", image_list_red)
             image_list_red = image_list_red.split(',')
             image_list_red = [item for item in image_list_red if item != ""]
             image_list_red = [(int(x) - 1) for x in image_list_red]
             image_list_red = list(set(image_list_red))
             
-            if len(image_list_red) > 0:
-                tiff_file_red_return = tiff_file_red_return[[x for x in range(tiff_file_red_return.shape[0]) if x not in image_list_red]]
+            
+            if all(elem in list(range(tiff_file_red_return.shape[0])) for elem in image_list_red):
+                if len(image_list_red) > 0:
+                    tiff_file_red_return = tiff_file_red_return[[x for x in range(tiff_file_red_return.shape[0]) if x not in image_list_red]]
+                    
                 
-            
-            if app_metadata.removal_list == None:
-                app_metadata.add_rm_list(image_list_red)
-            else:
-                image_list_red = list(set(app_metadata.removal_list + image_list_red))
-                app_metadata.add_rm_list(image_list_red)
-
-                
-            
-            
-            cv2.destroyAllWindows()
+                if app_metadata.removal_list == None:
+                    app_metadata.add_rm_list(image_list_red)
+                else:
+                    image_list_red = list(set(app_metadata.removal_list + image_list_red))
+                    app_metadata.add_rm_list(image_list_red)
     
-            window.destroy()
+                    
+                
+                
+                cv2.destroyAllWindows()
+        
+                window.destroy()
+            
+            else:
+                
+                error_text = (
+                    "The provided image numbers is not\n"
+                    "included in the images list.\n"
+                    "Please check the entered numbers!"
+                )
+                
+                error_win(error_text, parent_window = None)
             
         
         # basic show
@@ -1730,6 +1767,15 @@ def tiff_reduce_app(path_to_tiff, parent_window = None):
             window = tk.Toplevel(parent_window)
         
         
+        def validate_input(event):
+            content = event.widget.get("1.0", tk.END).strip()
+            
+            if all(char.isdigit() or char in {',', ' ', '\n'} for char in content):
+                return True
+            else:
+                event.widget.delete("end-2c", "end-1c")
+                return False
+            
         
         window.geometry("500x600")
         window.title("Z-selection")
@@ -1773,6 +1819,7 @@ def tiff_reduce_app(path_to_tiff, parent_window = None):
         tk.Label(window, text="").pack()
         
         t = Text(window, height=8, width=50)
+        t.bind("<KeyRelease>", validate_input)
         t.pack()
         
         display_image()
@@ -1997,8 +2044,8 @@ def z_projection_app(path_to_tiff:str, reduced_tiff, rm_tiff, parent_window = No
 
     
     brightness = tk.DoubleVar()
-    slider5 = tk.Scale(window_projection, from_=0, to=200, orient=tk.HORIZONTAL, length=400, variable=brightness)
-    slider5.set(100)
+    slider5 = tk.Scale(window_projection, from_=900, to=2000, orient=tk.HORIZONTAL, length=400, variable=brightness)
+    slider5.set(1000)
     slider5.pack()
     
     
@@ -2279,6 +2326,28 @@ def merge_images_app(image_list:list):
 
 
 def image_selection_app(input_image, img_length:int, img_width:int):
+    
+    
+    global check_name
+    
+    if '_rotated_' in check_name:
+        error_text = ('\nYou try use rotated image!\n'
+                      'The queue of raw images may be different!\n'
+                      'If you want to use rotated image be sure\n'
+                      'that the image was transformed again to\n'
+                      'the primary image position!')
+        
+        error_win(error_text, parent_window = None,  color= 'yellow', win_name= 'Warning')
+        
+        
+    elif '_loaded' in check_name:
+        error_text = ('\nYou try use loaded image!\n'
+                      'The queue of raw images may be different!\n'
+                      'If you want to use loaded image be sure\n'
+                      'that the image is original image\n'
+                      )
+        
+        error_win(error_text, parent_window = None,  color= 'yellow', win_name= 'Warning')
 
     
         
@@ -2383,7 +2452,16 @@ def image_selection_app(input_image, img_length:int, img_width:int):
         window_selection.destroy()
     
 
-    
+    def validate_input(event):
+        content = event.widget.get("1.0", tk.END).strip()
+        
+        if all(char.isdigit() or char in {',', ' ', '\n'} for char in content):
+            return True
+        else:
+            event.widget.delete("end-2c", "end-1c")
+            return False
+        
+        
     window_selection = tk.Tk()
     
     window_selection.geometry("500x625")
@@ -2444,8 +2522,10 @@ def image_selection_app(input_image, img_length:int, img_width:int):
     tk.Label(window_selection, text="").pack()
     
     t = Text(window_selection, height=10, width=50)
+    t.bind("<KeyRelease>", validate_input)
     t.pack()
-       
+    
+        
     
     
     tk.Label(window_selection, text="").pack()
@@ -3243,7 +3323,6 @@ def draw_annotation(input_image, main_window = None):
 
 
 
-
 def tiff_annotation(path_to_images:str, image_list:list, image_dictinary, metadata, grid = None):
     
     global app_metadata
@@ -3312,7 +3391,7 @@ def tiff_annotation(path_to_images:str, image_list:list, image_dictinary, metada
     cluth_bool = False
     contrast_type = 1
     his_bool = False
-    brightness_type = 100
+    brightness_type = 1000
     threshold_max_type = 2**16 - 1
     threshold_min_type = 0
     gamma_type = 1
@@ -3610,7 +3689,7 @@ def tiff_annotation(path_to_images:str, image_list:list, image_dictinary, metada
             slider2.set(1)
             slider3_min.set(0)
             slider3_max.set(int(65535))
-            slider5.set(100)
+            slider5.set(1000)
             slider6.set(1)
             c_var.set(False)
             h_var.set(False)
@@ -3652,7 +3731,7 @@ def tiff_annotation(path_to_images:str, image_list:list, image_dictinary, metada
 
             
             
-        
+                
         window_projection_tiff = tk.Toplevel(annotation_window)
         
         window_projection_tiff.geometry("500x625")
@@ -3694,8 +3773,8 @@ def tiff_annotation(path_to_images:str, image_list:list, image_dictinary, metada
         
         
         brightness = tk.DoubleVar()
-        slider5 = tk.Scale(window_projection_tiff, from_=0, to=200, orient=tk.HORIZONTAL, length=400, variable=brightness)
-        slider5.set(100)
+        slider5 = tk.Scale(window_projection_tiff, from_=900, to=2000, orient=tk.HORIZONTAL, length=400, variable=brightness)
+        slider5.set(1000)
         slider5.pack()
                 
         
@@ -4428,20 +4507,30 @@ def concatenate_window():
             
         if dec == True and dec2 == True and app_metadata.tiffs_path != None and app_metadata.concat_path != None and len(channels) > 0:
             
-            
-            progress_var.set(10) 
+            progress_var.set(10)
             progress_bar.update()
 
+            def run_concatenate():
+                dic, img_length, img_width = image_sequences(app_metadata.xml)
+                image_concatenate(str(app_metadata.tiffs_path), 
+                                  str(app_metadata.concat_path), 
+                                  dic, 
+                                  app_metadata.metadata, 
+                                  img_length, 
+                                  img_width, 
+                                  float(overlap), 
+                                  channels, 
+                                  resize, 
+                                  int(n_proc), 
+                                  str('threads'))
 
-            
-            dic, img_length, img_width = image_sequences(app_metadata.xml)
-            
 
-            con_win.after(0, image_concatenate(str(app_metadata.tiffs_path), str(app_metadata.concat_path), dic, app_metadata.metadata, img_length, img_width, float(overlap), channels, resize, int(n_proc), str('threads')))
+                con_win.after(0, lambda: progress_var.set(100))  
+                con_win.after(0, lambda: progress_bar.update())  
+
+            threading.Thread(target=run_concatenate).start()
             
-            progress_var.set(100)  
-            progress_bar.update()
-        
+         
         
         elif dec == False:
 
@@ -5056,7 +5145,248 @@ def img_manager_win():
             
             error_text = ('\nThe file extension is not available to load!!!')
             error_win(error_text, parent_window = load_win)
+           
+            
+    def rotate_():
+          
+        if len(file_listbox.curselection()) > 0:
+            global load_win   
+            global app_metadata
+            
+            
+            
+            global metadata_to_rotate
+            metadata_to_rotate = app_metadata.images_dict['metadata'][app_metadata.images_dict['img_name'].index(file_listbox.get(file_listbox.curselection()[0]))]
+            
+            global image_to_rotate 
+            image_to_rotate = app_metadata.images_dict['img'][app_metadata.images_dict['img_name'].index(file_listbox.get(file_listbox.curselection()[0]))]
+            
+            global inimg
+            inimg = resize_to_screen_img(image_to_rotate.copy(), factor = 4)
+            
+            global name_to_rotate 
+            name_to_rotate = app_metadata.images_dict['img_name'][app_metadata.images_dict['img_name'].index(file_listbox.get(file_listbox.curselection()[0]))]
+            
+            
+           
+            def display_image_rot():
+                global load_win
+                global zoom_factor
+                global zp
+                global x
+                global y
+                global after_id
+                global inimg
                 
+
+                
+          
+                if isinstance(app_metadata.resize_tmp['image'], np.ndarray):
+                    resized_image = update_zoomed_region(app_metadata.resize_tmp['image'], size.get(), x, y)
+                else:
+                    resized_image = update_zoomed_region(inimg, size.get(), x, y)
+
+                cv2.imshow('Rotate image',resized_image) 
+                
+                    
+                
+                key = cv2.waitKey(100) & 0xFF
+                if key == ord('z'):
+                    cv2.setMouseCallback('Rotate image', zoom_in)
+                else:
+                    cv2.setMouseCallback('Rotate image', lambda *args: None)  
+
+
+                rotate_win.after(100, display_image_rot)
+            
+            
+            def save_():
+                global im_to_save
+                
+                if isinstance(app_metadata.resize_tmp['image'], np.ndarray):
+                    
+                    app_metadata.add_image(im_to_save, app_metadata.resize_tmp['name'], app_metadata.resize_tmp['metadata'])
+                    
+                    app_metadata.add_resize(None, None, None)
+                    
+                    global rotate_win
+                    
+                    cv2.destroyAllWindows()
+                    rotate_win.destroy()
+                    
+                    img_list()
+                    
+                    
+                
+                else:
+                    
+                    error_text = ('\nNothing selected to save!\n'
+                                  'Firstly resize some image!')
+                    
+                    error_win(error_text, parent_window = rotate_win)
+                    
+
+            
+            
+            def exit_win():
+                
+                cv2.destroyAllWindows()
+                rotate_win.destroy()
+                
+             
+           
+            def rotate_run():
+                global app_metadata
+                global metadata_to_rotate
+                global image_to_rotate 
+                global name_to_rotate 
+                global im_to_save
+                global inimg
+                
+                
+
+                if rotate_box.get() == "0°":
+                    r = 0
+                elif rotate_box.get() == "90°":
+                    r = -1
+                elif rotate_box.get() == "180°":
+                    r = 2
+                elif rotate_box.get() == "180°":
+                    r = 2
+                elif rotate_box.get() == "270°":
+                    r = 1
+                    
+
+                tmp_img = rotate_function(inimg, r)
+                im_to_save = rotate_function(image_to_rotate, r)
+
+              
+
+                if mirror_box.get() == "horizontal":
+                    tmp_img = mirror_function(tmp_img, 'h')
+                    im_to_save = mirror_function(im_to_save, 'h')
+
+                elif mirror_box.get() == "vertical":
+                    tmp_img = mirror_function(tmp_img, 'v')
+                    im_to_save = mirror_function(im_to_save, 'v')
+
+                elif mirror_box.get() == "horizontal/vertical":
+                    tmp_img = mirror_function(tmp_img, 'hv')
+                    im_to_save = mirror_function(im_to_save, 'hv')
+
+
+                
+
+                    
+                n = 0
+                while(True):
+                    n += 1
+                    tmp_img_name = name_to_resize + '_rotated_' + str(n)
+                    if tmp_img_name not in app_metadata.images_dict['img_name']:
+                        break
+               
+               
+                app_metadata.add_resize(tmp_img, metadata_to_rotate, tmp_img_name)
+                    
+      
+                        
+                       
+    
+            global rotate_win
+            
+            rotate_win = tk.Toplevel(load_win)
+            
+            # rotate_win = tk.Tk()
+
+        
+            rotate_win.geometry("500x500")
+            rotate_win.title("Rotate image")
+        
+            rotate_win.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
+            
+            
+            tk.Label(rotate_win, text="", anchor="w").pack()
+            
+            
+            text = (
+                '    You can rotate or mirror your image.\n'
+                '    Please note that annotating the single images in their raw\n'
+                '    form will not be possible after rotating or mirroring.\n\n\n'
+                '    !The option Annotate raw for this image should be not use!\n'
+            )
+            
+        
+        
+            tk.Label(rotate_win, text=text, anchor="w", justify="center").pack()
+            
+            tk.Label(rotate_win, text="").pack()
+            
+            label1 = tk.Label(rotate_win, text="Rotate °:", anchor="w")
+            label1.pack()
+            
+           
+            rotate_type = ["0°", "90°", "180°", "270°"]
+
+            rotate_box = ttk.Combobox(rotate_win, values=rotate_type)
+            
+            rotate_box.current(0)
+            
+            rotate_box.pack()
+            
+            
+            tk.Label(rotate_win, text="").pack()
+            
+            label1 = tk.Label(rotate_win, text="Mirror type:", anchor="w")
+            label1.pack()
+            
+           
+            mirror_type = ["----------------------", "horizontal", "vertical", "horizontal/vertical"]
+
+            mirror_box = ttk.Combobox(rotate_win, values=mirror_type)
+            
+            mirror_box.current(0)
+            
+            mirror_box.pack()
+            
+            
+            
+
+            tk.Label(rotate_win, text="").pack()
+
+            
+            button4 = tk.Button(rotate_win, text="Rotate", command=rotate_run, width=20, height=2)
+            button4.pack()
+            
+            
+            tk.Label(rotate_win, text="").pack()
+
+            
+            button5 = tk.Button(rotate_win, text="Save", command=save_, width=20, height=2)
+            button5.pack()
+            
+            
+            tk.Label(rotate_win, text="").pack()
+
+            
+        
+            button6 = tk.Button(rotate_win, text="Back", command=exit_win, width=20, height=2)
+            button6.pack()
+            
+    
+            display_image_rot()
+            
+            rotate_win.mainloop()
+            
+            cv2.destroyAllWindows()
+
+            
+                 
+        else:
+            
+            error_text = ('\nLoad and / or select the image!!!')
+            error_win(error_text, parent_window = load_win)  
+            
+            
             
     def resize_():
           
@@ -5354,7 +5684,7 @@ def img_manager_win():
         load_win = tk.Tk()
         
     
-        load_win.geometry("650x690")
+        load_win.geometry("650x745")
         load_win.title("Images manager")
     
         load_win.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
@@ -5404,6 +5734,13 @@ def img_manager_win():
         
         button4 = tk.Button(load_win, text="Resize", command=resize_, width=20, height=2)
         button4.pack()
+    
+        tk.Label(load_win, text="").pack()
+        
+        
+        
+        button4_1 = tk.Button(load_win, text="Rotate", command=rotate_, width=20, height=2)
+        button4_1.pack()
     
         tk.Label(load_win, text="").pack()
         
@@ -6558,11 +6895,15 @@ def img_annotation_raw():
         
         if len(file_listbox.curselection()) > 0:
             global app_metadata
-          
+            global check_name
+            
+            check_name = app_metadata.images_dict['img_name'][app_metadata.images_dict['img_name'].index(file_listbox.get(file_listbox.curselection()[0]))]
             
             metadata = app_metadata.images_dict['metadata'][app_metadata.images_dict['img_name'].index(file_listbox.get(file_listbox.curselection()[0]))]
             image = app_metadata.images_dict['img'][app_metadata.images_dict['img_name'].index(file_listbox.get(file_listbox.curselection()[0]))]            
- 
+            
+           
+                
 
             if not isinstance(app_metadata.xml, pd.DataFrame):
                 
@@ -6948,8 +7289,8 @@ def img_annotation_raw():
         cv2.destroyAllWindows()
         anr_win.destroy() 
         
-        
-
+    
+    
     def main_win():
         global file_listbox
         global anr_win
@@ -6980,6 +7321,7 @@ def img_annotation_raw():
         tk.Label(anr_win, text="").pack()
         
         tk.Label(anr_win, text="Images list").pack()
+        
         
         
         file_listbox = tk.Listbox(anr_win, selectmode=tk.SINGLE, width=90)
@@ -7697,11 +8039,11 @@ if __name__ == "__main__":
 ############################### Main code / ####################################
 
 
- #       _  ____   _         _____              _                      __ _____  __  
- #      | ||  _ \ (_)       / ____|            | |                    / /|  __ \ \ \ 
- #      | || |_) | _   ___ | (___   _   _  ___ | |_  ___  _ __ ___   | | | |__) | | |
- #  _   | ||  _ < | | / _ \ \___ \ | | | |/ __|| __|/ _ \| '_ ` _ \  | | |  _  /  | |
- # | |__| || |_) || || (_) |____) || |_| |\__ \| |_|  __/| | | | | | | | | | \ \  | |
- #  \____/ |____/ |_| \___/|_____/  \__, ||___/ \__|\___||_| |_| |_|  \_\|_|  \_\/_/
+ #       _  ____   _         _____              _                      
+ #      | ||  _ \ (_)       / ____|            | |                     
+ #      | || |_) | _   ___ | (___   _   _  ___ | |_  ___  _ __ ___   
+ #  _   | ||  _ < | | / _ \ \___ \ | | | |/ __|| __|/ _ \| '_ ` _ \  
+ # | |__| || |_) || || (_) |____) || |_| |\__ \| |_|  __/| | | | | | 
+ #  \____/ |____/ |_| \___/|_____/  \__, ||___/ \__|\___||_| |_| |_|  
  #                                   __/ |                                   
  #                                  |___/      

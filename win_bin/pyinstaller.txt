@@ -1,4 +1,4 @@
-conda create py_app python=3.10
+conda create -n py_app python=3.10
 
 conda activate py_app
 
@@ -17,3 +17,5 @@ pip install Pillow
 
 
 pyinstaller --noconfirm --onefile --windowed --icon "jbi_icon.ico" --add-data "jbi_icon.png;." --add-data "jbs_icon.png;."  --add-data "jbi_icon.ico;." "image_app.py"
+
+pyinstaller --noconfirm --onefile --windowed --icon="jbi_icon.ico" --add-data="jbi_icon.png:." --add-data="jbs_icon.png:." --add-data="jbi_icon.ico:." "image_app.py"
