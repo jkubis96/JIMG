@@ -731,18 +731,15 @@ Options for images management and operation
 
 
 <br />
+<br />
 
 
-* Save - save the selected image from the manager
+
+> #### 1.5.2 Rotate options
+
 
 <br />
 
-<br />
-
-> #### 1.5.2 Resize options
-
-
-<br />
 
 
 <p align="center">
@@ -780,6 +777,15 @@ Options for images management and operation
 <br />
 
 <br />
+
+
+
+* Save - save the selected image from the manager
+
+<br />
+
+<br />
+
 
 
 > #### 1.5.3 Save options
