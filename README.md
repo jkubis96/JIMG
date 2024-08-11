@@ -6,8 +6,8 @@
 
 
 <p align="right">
-    <img src="https://github.com/jkubis96/JIMG/blob/v.2.0.0/JIMG/icons/jbs_icon.png?raw=true" alt="drawing" width="250" />
-    <img src="https://github.com/jkubis96/JIMG/blob/v.2.0.0/JIMG/icons/jbi_icon.png?raw=true" alt="drawing" width="250" />
+    <img src="https://github.com/jkubis96/Logos/blob/main/logos/jbs_current.png?raw=true" alt="drawing" width="250" />
+    <img src="https://github.com/jkubis96/Logos/blob/main/logos/jbi_current.png?raw=true" alt="drawing" width="250" />
 </p>
 
 
@@ -99,16 +99,27 @@ For more information, please feel free to contact us!
 
 CMD:
 ```
-pip install JIMG>=2.0.7
+pip install JIMG>=2.1.2
 ```
 
 
 <br />
 
 
-#### For Windows users:
+#### For Windows users .exe:
 
-* [Download](https://www.mediafire.com/file/nxc1fp0tkygu2tj/JIMG_v.2.0.exe/file)
+* [Download](https://www.mediafire.com/file/jj3q7xxcezko7tc/JIMG-v.2.0.exe/file)
+
+
+<br />
+
+
+#### Docker container:
+
+
+```
+docker pull jkubis96/jimg:v2.1.2
+```
 
 
 <br />
@@ -150,6 +161,17 @@ Run current version of application.exe file
 </p>
 
 
+<br />
+
+#### Docker container:
+
+
+```
+docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw --rm jkubis96/jimg:v2.1.2
+```
+
+
+<br />
 <br />
 
 
@@ -717,8 +739,50 @@ Options for images management and operation
 
 <br />
 
+> #### 1.5.2 Resize options
 
-> #### 1.5.2 Save options
+
+<br />
+
+
+<p align="center">
+<img  src="https://raw.githubusercontent.com/jkubis96/JIMG/v.2.0.0/fig/1.1.4.3%20manager%20-%20rotate.bmp" alt="drawing" />
+</p>
+
+
+<br />
+
+
+
+> * Rotate ° - set the degree of angle of the image rotation  [0°, 90°, 180°, 270°]
+
+
+<br />
+
+
+> * Mirror type ° - set the side for the image mirroring  [horizontal, vertical, horizontal/vertical].
+
+
+<br />
+
+
+> * Rotate - apply rotation/mirroring changes
+
+
+<br />
+
+
+> * Save - save rotation/mirroring changes
+
+> > After saving the projection will be visible in the 'Images manager'
+
+
+<br />
+
+<br />
+
+
+> #### 1.5.3 Save options
 
 
 <br />
