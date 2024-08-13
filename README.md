@@ -99,7 +99,7 @@ For more information, please feel free to contact us!
 
 CMD:
 ```
-pip install JIMG>=2.1.2
+pip install JIMG>=2.1.4
 ```
 
 
@@ -108,7 +108,7 @@ pip install JIMG>=2.1.2
 
 #### For Windows users .exe:
 
-* [Download](https://www.mediafire.com/file/jj3q7xxcezko7tc/JIMG-v.2.0.exe/file)
+* [Download](https://www.mediafire.com/file/i6c36a5xbfxmubq/JIMG-v.2.1.4.exe/file)
 
 
 <br />
@@ -118,7 +118,7 @@ pip install JIMG>=2.1.2
 
 
 ```
-docker pull jkubis96/jimg:v2.1.2
+docker pull jkubis96/jimg:v2.1.4
 ```
 
 
@@ -167,7 +167,7 @@ Run current version of application.exe file
 
 
 ```
-docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw --rm jkubis96/jimg:v2.1.2
+docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw --rm jkubis96/jimg:v2.1.4
 ```
 
 

@@ -1895,17 +1895,14 @@ def z_projection_app(path_to_tiff:str, reduced_tiff, rm_tiff, parent_window = No
     
     
     
-    def close_window(path_to_tiff = path_to_tiff):
+    def close_window():
         global window_projection
         global returned_projection
-        
-        
-        tiff_main = load_tiff(path_to_tiff=path_to_tiff)
-        
-        returned_projection = z_projection(tiff_object = tiff_main, projection_type = projections_type.get())
-        
-        del tiff_main
-        
+        global tiff_file_app
+    
+                
+        returned_projection = z_projection(tiff_object = tiff_file_app, projection_type = projections_type.get())
+                
         
         if h_var.get() == True:
             returned_projection =  equalizeHist_16bit(returned_projection)
@@ -2215,7 +2212,7 @@ def merge_images_app(image_list:list):
 
     window_merge = tk.Tk()
     
-    window_merge.geometry("500x510")
+    window_merge.geometry("500x600")
     window_merge.title("Merge channels")
 
     window_merge.iconbitmap(os.path.join(_icon_source,'jbi_icon.ico'))
@@ -5281,7 +5278,7 @@ def img_manager_win():
                 n = 0
                 while(True):
                     n += 1
-                    tmp_img_name = name_to_resize + '_rotated_' + str(n)
+                    tmp_img_name = name_to_rotate + '_rotated_' + str(n)
                     if tmp_img_name not in app_metadata.images_dict['img_name']:
                         break
                
