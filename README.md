@@ -3,7 +3,7 @@
 ##### New version 1.4.9 allows easier and more complex processing of images from Opera Phenix Plus High-Content Screening System.
 
 <p align="right">
-<img  src="https://github.com/jkubis96/JIMG/blob/v.1.0.0/fig/logo_jbs.PNG?raw=true"drawing" width="250" />
+<img  src="https://github.com/jkubis96/Logos/blob/main/logos/jbs_current.png?raw=true"drawing" width="250" />
 </p>
 
 
@@ -493,4 +493,4 @@ jimg.select_pictures(image_queue, 'Images', 'selected_images', numbers_of_pictur
 ##### The high-resolution wild images selected in this way can be used for further analysis using ML/AI algorithms, depending on the topic under study
 
 
-#### Have fun JBS®
+#### Have fun JBS
