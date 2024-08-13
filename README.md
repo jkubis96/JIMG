@@ -2430,4 +2430,4 @@ jg.save_image(image = merged_image, path_to_save = 'merged_image.png')
 <br />
 
 
-### Have fun JBS®
+### Have fun JBS
