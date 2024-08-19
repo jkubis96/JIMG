@@ -1945,7 +1945,7 @@ def z_projection_app(path_to_tiff:str, reduced_tiff, rm_tiff, parent_window = No
         slider2.set(1)
         slider3_min.set(0)
         slider3_max.set(int(65535))
-        slider5.set(100)
+        slider5.set(1000)
         slider6.set(1)
         c_var.set(False)
         h_var.set(False)
