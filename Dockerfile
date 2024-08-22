@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y xvfb
 
 
 RUN pip install opencv-python-headless \
-    JIMG==2.1.5
+    JIMG==2.1.7
 
 
 CMD ["python3", "-c", "from JIMG.app.load_app import run; run()"]

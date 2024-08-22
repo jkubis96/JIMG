@@ -1637,10 +1637,10 @@ def tiff_reduce_app(path_to_tiff, parent_window = None):
         
         tiff_file_red = resize_to_screen_tiff(tmp.copy(), factor = 4)
         
+        
+        tiff_file_red_return = tmp
+
         del tmp
-        
-        tiff_file_red_return = tiff_file_red.copy()
-        
         
         global window
         global zoom_factor
@@ -1942,7 +1942,8 @@ def z_projection_app(path_to_tiff:str, reduced_tiff, rm_tiff, parent_window = No
   
         
         stacked_app = adjust_img_16bit(img = stacked_app ,color = combobox.get(), max_intensity = int(threshold_max.get()), min_intenisty = int(threshold_min.get()), brightness = int(brightness.get()), contrast = float(contrast.get()), gamma = float(gamma.get()))
-              
+        stacked_app = resize_to_screen_img(stacked_app, factor = 4)
+
         
     def reset__():
         slider2.set(1)
