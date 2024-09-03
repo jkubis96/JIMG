@@ -25,12 +25,12 @@ pyinstaller --noconfirm --onefile --windowed --icon="jbi_icon.ico" --add-data="j
 
 #DOCKER
 
-docker build -t jimg:v2.1.7 .
+docker build -t jimg:v2.1.9 .
 
-docker tag jimg:v2.1.5 jkubis96/jimg:v2.1.7
+docker tag jimg:v2.1.9 jkubis96/jimg:v2.1.9
 
 docker login
 
-docker push jkubis96/jimg:v2.1.7
+docker push jkubis96/jimg:v2.1.9
 
 

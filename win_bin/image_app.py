@@ -829,10 +829,19 @@ def image_concatenate(path_to_images:str, path_to_save:str, imgs:pd.DataFrame, m
         os.chdir(path_to_images)         
             
         
-        def par_1(q, img_width, imgs, black_img, st, ch, overlap, resize):
-            stop = img_width * (q + 1)
-            start = img_width * q
-            tmp = imgs['queue'][start:stop]
+        def par_1(q, img_width, imgs, black_img, st, overlap, resize, tmp_img):
+            img_width_copy = copy.deepcopy(img_width)
+            imgs_copy = copy.deepcopy(imgs)
+            black_img_copy = copy.deepcopy(black_img)
+            st_copy = copy.deepcopy(st)
+            overlap_copy = copy.deepcopy(overlap)
+            resize_copy = copy.deepcopy(resize)
+            tmp_img_copy = copy.deepcopy(tmp_img)
+
+
+            stop = img_width_copy * (q + 1)
+            start = img_width_copy * q
+            tmp = imgs_copy['queue'][start:stop]
     
             list_p = []
             for t in tmp:
@@ -840,7 +849,7 @@ def image_concatenate(path_to_images:str, path_to_save:str, imgs:pd.DataFrame, m
                     list_p.append(str(t))
                 else:
                     list_p.append(
-                        str([f for f in tmp_img if str(re.sub('\n', '', str(t)) + 'p') in f and str('p' + st) in f][0]))
+                        str([f for f in tmp_img_copy if str(re.sub('\n', '', str(t)) + 'p') in f and str('p' + st_copy) in f][0]))
            
             
             data = []
@@ -848,32 +857,32 @@ def image_concatenate(path_to_images:str, path_to_save:str, imgs:pd.DataFrame, m
                 if os.path.exists(img):
                     data.append(cv2.imread(img, cv2.IMREAD_ANYDEPTH))
                 else:
-                    data.append(black_img)
+                    data.append(black_img_copy)
     
             row, col = data[0].shape
             for n, i in enumerate(data):
-                if resize > 1:
+                if resize_copy > 1:
                     original_height, original_width = data[n].shape[:2]
     
-                    new_width = original_width // resize
-                    new_height = original_height // resize
-                    if overlap > 0:
-                        data[n] = cv2.resize(data[n][:, int(col * overlap / 2):-int(col * overlap / 2)], (new_width, new_height), interpolation=cv2.INTER_LINEAR)
+                    new_width = original_width // resize_copy
+                    new_height = original_height // resize_copy
+                    if overlap_copy > 0:
+                        data[n] = cv2.resize(data[n][:, int(col * overlap_copy / 2):-int(col * overlap_copy / 2)], (new_width, new_height), interpolation=cv2.INTER_LINEAR)
                     else:
                         data[n] = cv2.resize(data[n], (new_width, new_height), interpolation=cv2.INTER_LINEAR)
                     
                 else:
-                    if overlap > 0:
-                        data[n] = data[n][:, int(col * overlap / 2):-int(col * overlap / 2)]
+                    if overlap_copy > 0:
+                        data[n] = data[n][:, int(col * overlap_copy / 2):-int(col * overlap_copy / 2)]
     
             data = np.concatenate(data, axis=1)
             
             
-            if overlap > 0:
+            if overlap_copy > 0:
                 row, col = data.shape  
-                data = data[int(row*overlap/2):-int(row*overlap/2), :]
+                data = data[int(row*overlap_copy/2):-int(row*overlap_copy/2), :]
     
-            return data
+            return q, data
         
         
         
@@ -892,10 +901,17 @@ def image_concatenate(path_to_images:str, path_to_save:str, imgs:pd.DataFrame, m
             black_img = cv2.imread(tmp_img[0], cv2.IMREAD_ANYDEPTH)
             black_img.fill(0) 
             
+            
             for st in deep:
                 
-                data = Parallel(n_jobs=n_proc, prefer=par_type)(delayed(par_1)(q, img_width, imgs, black_img, st, ch, overlap, resize) for q in range(0,img_length))
-               
+                with Parallel(n_jobs=n_proc, prefer=par_type) as parallel:
+                    data = parallel(delayed(par_1)(q, img_width, imgs, black_img, st, overlap, resize, tmp_img) 
+                                    for q in range(0, img_length))
+                               
+                data.sort(key=lambda x: x[0])
+
+                data = [result[1] for result in data]
+                
                 data = np.concatenate(data, axis = 0)
                 
                 images_tmp.append(data)
@@ -928,15 +944,19 @@ def image_concatenate(path_to_images:str, path_to_save:str, imgs:pd.DataFrame, m
             
             del data
             
+            from joblib.externals.loky import get_reusable_executor
+            get_reusable_executor().shutdown(wait=True)
+            
             os.chdir(path_to_images)    
             
             
             
-        os.chdir(init_path)    
+        os.chdir(init_path)  
     
     except:
         os.chdir(init_path)   
         print("Something went wrong. Check the function input data and try again! \nCheck that the number of channels you want to assemble matches the number of data channels!")
+
 
 
 
@@ -4504,28 +4524,37 @@ def concatenate_window():
             
         if dec == True and dec2 == True and app_metadata.tiffs_path != None and app_metadata.concat_path != None and len(channels) > 0:
             
+
             progress_var.set(10)
             progress_bar.update()
+            
+            import time
+            time.sleep(5)
+            
+            
+            # off ERROR
+            import warnings
 
-            def run_concatenate():
-                dic, img_length, img_width = image_sequences(app_metadata.xml)
-                image_concatenate(str(app_metadata.tiffs_path), 
-                                  str(app_metadata.concat_path), 
-                                  dic, 
-                                  app_metadata.metadata, 
-                                  img_length, 
-                                  img_width, 
-                                  float(overlap), 
-                                  channels, 
-                                  resize, 
-                                  int(n_proc), 
-                                  str('threads'))
+            warnings.filterwarnings("ignore", category=RuntimeWarning, message=".*main thread is not in main loop.*")
+           
+            dic, img_length, img_width = image_sequences(app_metadata.xml)
+            image_concatenate(str(app_metadata.tiffs_path), 
+                                str(app_metadata.concat_path), 
+                                dic, 
+                                app_metadata.metadata, 
+                                img_length, 
+                                img_width, 
+                                float(overlap), 
+                                channels, 
+                                resize, 
+                                int(n_proc), 
+                                str('threads'))
 
 
-                con_win.after(0, lambda: progress_var.set(100))  
-                con_win.after(0, lambda: progress_bar.update())  
+            
+            progress_var.set(100)
 
-            threading.Thread(target=run_concatenate).start()
+
             
          
         
@@ -4533,6 +4562,7 @@ def concatenate_window():
 
             error_text = ('\nYou must provide the images overlap value (float number)\n'
                           'which was set previously in the image-creating system!!!')
+            
             error_win(error_text, parent_window = con_win)
             
         elif dec2 == False:

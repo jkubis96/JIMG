@@ -15,7 +15,7 @@ print('')
 
 print('')
 
-print('Welcome in JIMG v.2.1.7 library')
+print('Welcome in JIMG v.2.1.9 library')
 print('')
 print('Loading required packages...')
 
